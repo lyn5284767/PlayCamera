@@ -148,5 +148,19 @@ namespace PlayCamera
             MessageBox.Show("确认退出？", "提示", MessageBoxButton.OKCancel);
             this.Close();
         }
+
+        private void FullImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
+            this.gdMain.Visibility = Visibility.Collapsed;
+            this.gdAll.Children.Add(FullPlayCamera.Instance);
+        }
+
+        private void Instance_CanelFullScreenEvent()
+        {
+            FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
+            this.gdMain.Visibility = Visibility.Visible;
+            this.gdAll.Children.Remove(FullPlayCamera.Instance);
+        }
     }
 }

@@ -101,6 +101,9 @@
     <Compile Include="FourPanel.xaml.cs">
       <DependentUpon>FourPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FullPlayCamera.xaml.cs">
+      <DependentUpon>FullPlayCamera.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NinePanel.xaml.cs">
       <DependentUpon>NinePanel.xaml</DependentUpon>
     </Compile>
@@ -111,6 +114,10 @@
     </Compile>
     <Compile Include="SQLiteFac.cs" />
     <Page Include="FourPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FullPlayCamera.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

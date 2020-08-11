@@ -9,94 +9,96 @@
     <Window.Resources>
 
     </Window.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="4*"/>
-        </Grid.ColumnDefinitions>
-        <ListBox Grid.Column="0">
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头1</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头2</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头3</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头4</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头5</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头6</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头7</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头8</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>摄像头9</TextBlock>
-                    <Image Source="/Images/Pause.png" Width="30" Height="30">
-                    </Image>
-                </StackPanel>
-            </ListBoxItem>
-        </ListBox>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="50"/>
-            </Grid.RowDefinitions>
-            <Grid Name="MainPanel" Grid.Row="0"></Grid>
-            <Border Grid.Row="1" BorderBrush="#686868" BorderThickness="1,1,0,0">
-                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                    <Grid Background="LightBlue" Name="gdFour" Margin="10,0,10,0">
-                        <Image Source="/Images/Four.png" MouseLeftButtonDown="FourImage_MouseLeftButtonDown"/>
-                    </Grid>
-                    <Grid Name="gdNine" Margin="10,0,10,0">
-                        <Image Source="/Images/Nine.png" MouseLeftButtonDown="NineImage_MouseLeftButtonDown"/>
-                    </Grid>
-                    <Image Source="/Images/FullScreen.png" Margin="20,0,0,0"/>
-                    <Image Source="/Images/Exit.png" Margin="20,0,0,0" MouseLeftButtonDown="ExitImage_MouseLeftButtonDown"/>
-                </StackPanel>
-            </Border>
+    <Grid Name="gdAll">
+        <Grid Name="gdMain">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+            <ListBox Grid.Column="0">
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头1</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头2</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头3</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头4</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头5</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头6</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头7</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头8</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>摄像头9</TextBlock>
+                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        </Image>
+                    </StackPanel>
+                </ListBoxItem>
+            </ListBox>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+                <Grid Name="MainPanel" Grid.Row="0"></Grid>
+                <Border Grid.Row="1" BorderBrush="#686868" BorderThickness="1,1,0,0">
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Grid Background="LightBlue" Name="gdFour" Margin="10,0,10,0">
+                            <Image Source="/Images/Four.png" MouseLeftButtonDown="FourImage_MouseLeftButtonDown"/>
+                        </Grid>
+                        <Grid Name="gdNine" Margin="10,0,10,0">
+                            <Image Source="/Images/Nine.png" MouseLeftButtonDown="NineImage_MouseLeftButtonDown"/>
+                        </Grid>
+                        <Image Source="/Images/FullScreen.png" Margin="20,0,0,0" MouseLeftButtonDown="FullImage_MouseLeftButtonDown"/>
+                        <Image Source="/Images/Exit.png" Margin="20,0,0,0" MouseLeftButtonDown="ExitImage_MouseLeftButtonDown"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

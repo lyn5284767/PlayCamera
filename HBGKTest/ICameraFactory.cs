@@ -6,7 +6,8 @@ using System.Text;
 namespace HBGKTest
 {
     public delegate void ChangeVideo();
-    public delegate void FullScreen();
+    public delegate void FullScreen(int cameraID);
+    public delegate void SelectCamera(int cameraID);
     public interface ICameraFactory
     {
         ChannelInfo Info { get; set; }
@@ -40,5 +41,6 @@ namespace HBGKTest
 
         event ChangeVideo ChangeVideoEvent;
         event FullScreen FullScreenEvent;
+        event SelectCamera SelectCameraEvent;
     }
 }

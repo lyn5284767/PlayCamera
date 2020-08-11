@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HBGKTest;
+using HBGKTest.YiTongCamera;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,6 +48,48 @@ namespace PlayCamera
         public FullPlayCamera()
         {
             InitializeComponent();
+        }
+
+        public void PlayCamera(int camId)
+        {
+            Image cameraInitImage = new Image();
+            cameraInitImage.Source = new BitmapImage(new Uri("../Images/camera.jpg", UriKind.Relative));
+            try
+            {
+                ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == camId).FirstOrDefault();
+                if (camera is UIControl_HBGK1)
+                {
+                    UIControl_HBGK1 cam = new UIControl_HBGK1(camera.Info);
+                    cam.StopCamera();
+                    if (cam.InitCamera(camera.Info))
+                    {
+                        gridCamera.Children.Clear();
+                        gridCamera.Children.Clear();
+                        gridCamera.Children.Add(cam);
+                    }
+                }
+                else if (camera is YiTongCameraControl)
+                {
+                    YiTongCameraControl cam = new YiTongCameraControl(camera.Info);
+                    cam.StopCamera();
+                    if (cam.InitCamera(camera.Info))
+                    {
+                        gridCamera.Children.Clear();
+                        gridCamera.Children.Clear();
+                        gridCamera.Children.Add(cam);
+                    }
+                }
+                else
+                {
+                    camera.Info.IsPlay = false;
+                    gridCamera.Children.Add(cameraInitImage);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("播放失败，资源被占用");
+                gridCamera.Children.Add(cameraInitImage);
+            }
         }
 
         private void CancelFullImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

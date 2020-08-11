@@ -1,7 +1,9 @@
 ﻿using HBGKTest;
 using HBGKTest.YiTongCamera;
+using Main;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -26,61 +29,332 @@ namespace PlayCamera
     {
         System.Timers.Timer cameraSaveThreadTimer = new System.Timers.Timer();
         BrushConverter bc = new BrushConverter();
+        //ViewModel viewModel = new ViewModel();
         public MainWindow()
         {
             InitializeComponent();
-            InitCameraInfo();
+            //this.DataContext = viewModel;
+            GlobalInfo.Instance.nowPanel = NowPanel.Four;
+            //InitCameraGroup();
+            //InitCameraInfo();
+            ////CameraBindGrid();
+            //InitPlayList();
+            //InitCameraTree();
+            this.Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            InitCameraTree();
             InitCameraSaveTimeThread();
-            this.MainPanel.Children.Clear();
-            this.MainPanel.Children.Add(FourPanel.Instance);
+            InitPlayPanel();
+        }
+
+        private void InitCameraTree()
+        {
+            this.tvCamera.Height = this.Height;
+            string sql = "Select * from CameraGroup";
+            GlobalInfo.Instance.GroupList = SQLiteFac.Instance.ExecuteList<CameraGroup>(sql);
+            sql = "Select * from CameraInfo";
+            GlobalInfo.Instance.CameraInfoList = SQLiteFac.Instance.ExecuteList<CameraInfo>(sql);
+            Node root = new Node();
+            root.NodeId = 0;
+            root.NodeName = "根节点";
+            GlobalInfo.Instance.CamList.Add(root);
+            foreach (CameraGroup group in GlobalInfo.Instance.GroupList)
+            {
+                Node node = AddGroup(group, root);
+                List<CameraInfo> CameraList = GlobalInfo.Instance.CameraInfoList.Where(w => w.CamGroup == group.Id).ToList();
+                foreach (CameraInfo info in CameraList)
+                {
+                    Node camnode = new Node();
+                    camnode.NodeId = info.Id;
+                    camnode.NodeName = info.CAMERANAME;
+                    camnode.NodeImg = "/Images/Play.png";
+                    camnode.Tag = info;
+                    camnode.Parent = node;
+                    node.Nodes.Add(camnode);
+                    // 添加全局摄像头
+                    ChannelInfo clInfo = CameraInfoToChannelInfo(info);
+                    switch (clInfo.CameraType)
+                    {
+                        case 0:
+                            {
+                                GlobalInfo.Instance.CameraList.Add(new UIControl_HBGK1(clInfo));
+                                break;
+                            }
+                        case 1:
+                            {
+                                GlobalInfo.Instance.CameraList.Add(new YiTongCameraControl(clInfo));
+                                break;
+                            }
+                    }
+                }
+            }
+            //viewModel.TreeNodes = GlobalInfo.Instance.CamList;
+            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            //ExpandTree(GlobalInfo.Instance.CamList.FirstOrDefault());
+            //SelectTheCurrentNode(8);
         }
         /// <summary>
-        /// 初始化
+        /// 添加分组
+        /// </summary>
+        /// <param name="group">摄像头组</param>
+        private Node AddGroup(CameraGroup group,Node root)
+        {
+            Node node = new Node();
+            node.NodeId = group.Id;
+            node.NodeName = group.Name;
+            node.Tag = group;
+            //node.NodeImg = "/Images/Play.png";
+            root.Nodes.Add(node);
+            return node;
+        }
+        /// <summary>
+        /// 树列表选择变换事件
+        /// </summary>
+        private void tvCamera_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            Node node = this.tvCamera.SelectedItem as Node;
+            if (node != null)
+            {
+                GlobalInfo.Instance.SelectNode = node;
+            }
+            if (GlobalInfo.Instance.SelectNode.Tag is CameraGroup)
+            {
+                ExpandTree(GlobalInfo.Instance.SelectNode);
+            }
+        }
+
+        private void ExpandTree(Node node)
+        {
+            DependencyObject dependencyObject = this.tvCamera.ItemContainerGenerator.ContainerFromItem(node);
+            if (dependencyObject != null)//第一次打开程序，dependencyObject为null，会出错
+            {
+                ((TreeViewItem)dependencyObject).ExpandSubtree();
+            }
+        }
+
+        /// <summary>
+        /// Step 1.初始化摄像头组
+        /// </summary>
+        private void InitCameraGroup()
+        {
+            string sql = "Select * from CameraGroup";
+            GlobalInfo.Instance.GroupList = SQLiteFac.Instance.ExecuteList<CameraGroup>(sql);
+            bool isFirst = true;
+            foreach (CameraGroup group in GlobalInfo.Instance.GroupList)
+            {
+                Expander exp = InitExpander(group);
+                spCameraList.Children.Add(exp);
+                exp.Content = InitListBox(group);
+                if (isFirst)
+                {
+                    isFirst = false;
+                    exp.IsExpanded = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Step 2.初始化摄像头信息
         /// </summary>
         private void InitCameraInfo()
         {
             string sql = "Select * from CameraInfo";
-            GlobalInfo.Instance.ProtocolList = SQLiteFac.Instance.ExecuteList<CameraInfo>(sql);
-            foreach (CameraInfo info in GlobalInfo.Instance.ProtocolList)
+            GlobalInfo.Instance.CameraInfoList = SQLiteFac.Instance.ExecuteList<CameraInfo>(sql);
+            foreach (CameraInfo info in GlobalInfo.Instance.CameraInfoList)
             {
-                ChannelInfo ch1 = new ChannelInfo();
-                ch1.ID = info.Id;
-                ch1.ChlID = info.CHLID.ToString();
-                ch1.RemoteChannle = info.REMOTECHANNLE.ToString();
-                ch1.RemoteIP = info.REMOTEIP;
-                ch1.RemotePort = info.REMOTEPORT;
-                ch1.RemoteUser = info.REMOTEUSER;
-                ch1.RemotePwd = info.REMOTEPWD;
-                ch1.nPlayPort = info.NPLAYPORT;
-                ch1.PtzPort = info.PTZPORT;
-                ch1.CameraType = info.CAMERATYPE;
-                GlobalInfo.Instance.ChList.Add(ch1);
+                GlobalInfo.Instance.ChList.Add(CameraInfoToChannelInfo(info));
             }
             foreach (ChannelInfo info in GlobalInfo.Instance.ChList)
             {
+                CameraWithPlayPanel tmp = new CameraWithPlayPanel();
                 switch (info.CameraType)
                 {
                     case 0:
                         {
-                            GlobalInfo.Instance.CameraList.Add(new UIControl_HBGK1(info));
+                            tmp.camera = new UIControl_HBGK1(info);
+                            //GlobalInfo.Instance.CameraList.Add(new UIControl_HBGK1(info));
                             break;
                         }
                     case 1:
                         {
-                            GlobalInfo.Instance.CameraList.Add(new YiTongCameraControl(info));
+                            tmp.camera = new YiTongCameraControl(info);
+                            //GlobalInfo.Instance.CameraList.Add(new YiTongCameraControl(info));
                             break;
                         }
+                }
+                GlobalInfo.Instance.cameraWithPlayPanelList.Add(tmp);
+            }
+        }
+       
+        /// <summary>
+        /// Step 3.摄像头绑定播放Grid
+        /// </summary>
+        private void CameraBindGrid()
+        {
+            if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
+            {
+                foreach (CameraWithPlayPanel item in GlobalInfo.Instance.cameraWithPlayPanelList.Where(w=>w.camera.Info.CamGroup == 1))
+                {
+                    Grid gd = GlobalInfo.Instance.fourGdList.Where(w => w.Tag.ToString() == item.camera.Info.ID.ToString()).FirstOrDefault();
+                    if (gd != null)
+                    {
+                        item.PlayGrid = gd;
+                    }
+                }
+            }
+            else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
+            {
+                foreach (CameraWithPlayPanel item in GlobalInfo.Instance.cameraWithPlayPanelList.Where(w => w.camera.Info.CamGroup == 1))
+                {
+                    Grid gd = GlobalInfo.Instance.nineGdList.Where(w => w.Tag.ToString() == item.camera.Info.ID.ToString()).FirstOrDefault();
+                    if (gd != null)
+                    {
+                        item.PlayGrid = gd;
+                    }
                 }
             }
         }
         /// <summary>
-        /// 初始化摄像头录像线程
+        /// Step 4.初始化播放列表
+        /// </summary>
+        private void InitPlayList()
+        {
+            foreach (System.Windows.Controls.ListBox lb in GlobalInfo.Instance.listBoxeList)
+            {
+                List<CameraWithPlayPanel> tmpList = GlobalInfo.Instance.cameraWithPlayPanelList.Where(w => w.camera.Info.CamGroup.ToString() == lb.Tag.ToString()).ToList();
+                foreach (CameraWithPlayPanel panel in tmpList)
+                {
+                    lb.Items.Add(InitListBoxItem(panel));
+                }
+            }
+        }
+
+        /// <summary>
+        /// step 5.初始化摄像头录像线程
         /// </summary>
         private void InitCameraSaveTimeThread()
         {
             cameraSaveThreadTimer.Interval = 1;
             cameraSaveThreadTimer.Start();
             cameraSaveThreadTimer.Elapsed += CameraSaveThreadTimer_Elapsed;
+        }
+
+        /// <summary>
+        /// step 6.初始化播放画面
+        /// </summary>
+        private void InitPlayPanel()
+        {
+            this.MainPanel.Children.Clear();
+            this.MainPanel.Children.Add(FourPanel.Instance);
+            FourPanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
+            FourPanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
+            FourPanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
+            //this.lbCamera.Focus();
+            GlobalInfo.Instance.fourGdList.Clear();
+            GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera1);
+            GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera2);
+            GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera3);
+            GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera4);
+
+            NinePanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
+            NinePanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
+            NinePanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
+            GlobalInfo.Instance.nineGdList.Clear();
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera1);
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera2);
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera3);
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera4);
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera5);
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera6);
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera7);
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera8);
+            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera9);
+        }
+
+        /// <summary>
+        /// 初始化Expander
+        /// </summary>
+        /// <param name="group">摄像头组信息</param>
+        private Expander InitExpander(CameraGroup group)
+        {
+            Expander expander = new Expander();
+            expander.Header = group.Name;
+            expander.FontSize = 24;
+            expander.Margin = new Thickness(0, 5, 5, 0);
+            expander.Tag = group;
+            expander.Name = "exp" + group.Id;
+            expander.MouseRightButtonDown += Expander_MouseRightButtonDown;
+            //GlobalInfo.Instance.expanderList.Add(expander);
+            return expander;
+        }
+        /// <summary>
+        /// 初始化组内listbox
+        /// </summary>
+        /// <param name="group">所属分组</param>
+        private System.Windows.Controls.ListBox InitListBox(CameraGroup group)
+        {
+            System.Windows.Controls.ListBox listBox = new System.Windows.Controls.ListBox();
+            listBox.Name = "lb" + group.Id;
+            listBox.Tag = group.Id;
+            listBox.SelectionChanged += ListBox_SelectionChanged;
+            GlobalInfo.Instance.listBoxeList.Add(listBox);
+            return listBox;
+        }
+
+        /// <summary>
+        /// 切换摄像头
+        /// </summary>
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //ListBox listBox = sender as listBox;
+            ListBoxItem tmpItem = (sender as System.Windows.Controls.ListBox).SelectedItem as ListBoxItem;
+            CameraWithPlayPanel tempCamera;
+            if (tmpItem.Tag is CameraWithPlayPanel)
+            {
+                tempCamera = tmpItem.Tag as CameraWithPlayPanel;
+                GlobalInfo.Instance.SelectGroup = GlobalInfo.Instance.GroupList.Where(w => w.Id == tempCamera.camera.Info.ID).FirstOrDefault();
+                GlobalInfo.Instance.SelectCamera = tempCamera;
+            }
+        }
+
+        /// <summary>
+        /// 右键选择分组
+        /// </summary>
+        private void Expander_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            GlobalInfo.Instance.SelectGroup = ((sender as Expander).Tag as CameraGroup);
+            GlobalInfo.Instance.SelectCamera = null;
+        }
+
+        private ListBoxItem InitListBoxItem(CameraWithPlayPanel item)
+        {
+            ListBoxItem listBoxItem = new ListBoxItem();
+            listBoxItem.FontSize = 24;
+            listBoxItem.Margin = new Thickness(0, 10, 0, 0);
+            listBoxItem.Foreground = (Brush)bc.ConvertFrom("#000000");
+            listBoxItem.Tag = item;
+            GlobalInfo.Instance.ListBoxItemList.Add(listBoxItem);
+            StackPanel sp = new StackPanel();
+            sp.Orientation = System.Windows.Controls.Orientation.Horizontal;
+            sp.MouseLeftButtonDown += MouseDown_PlayCamera;
+            sp.Tag = item;
+            TextBlock tb = new TextBlock();
+            tb.Text = item.camera.Info.CameraName;
+            tb.Tag = item;
+            sp.Children.Add(tb);
+            Image img = new Image();
+            img.Name = "imgCamera" + item.camera.Info.ID;
+            img.Source = new BitmapImage(new Uri("/Images/Play.png", UriKind.Relative));
+            img.Width = 30;
+            img.Height = 30;
+            sp.Children.Add(img);
+            listBoxItem.Content = sp;
+            GlobalInfo.Instance.textBlockList.Add(tb);
+
+            return listBoxItem;
         }
 
         private void CameraSaveThreadTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -94,11 +368,33 @@ namespace PlayCamera
                     string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
                     camera.StopFile();
                     camera.SaveFile(filePath, fileName);
-
                 }
             }
             catch (Exception ex)
             { }
+        }
+
+        /// <summary>
+        /// CameraInfo转为ChannelInfo
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        private ChannelInfo CameraInfoToChannelInfo(CameraInfo info)
+        {
+            ChannelInfo ch1 = new ChannelInfo();
+            ch1.ID = info.Id;
+            ch1.ChlID = info.CHLID.ToString();
+            ch1.RemoteChannle = info.REMOTECHANNLE.ToString();
+            ch1.RemoteIP = info.REMOTEIP;
+            ch1.RemotePort = info.REMOTEPORT;
+            ch1.RemoteUser = info.REMOTEUSER;
+            ch1.RemotePwd = info.REMOTEPWD;
+            ch1.nPlayPort = info.NPLAYPORT;
+            ch1.PtzPort = info.PTZPORT;
+            ch1.CameraType = info.CAMERATYPE;
+            ch1.CameraName = info.CAMERANAME;
+            ch1.CamGroup = info.CamGroup;
+            return ch1;
         }
 
         /// <summary>
@@ -112,11 +408,14 @@ namespace PlayCamera
             // 硬盘空间小于1G，开始清理录像
             foreach (System.IO.DriveInfo drive in drives)
             {
-                if (drive.Name == disk[0] + "\\" && drive.TotalFreeSpace / (1024 * 1024) < 1024)
+                if (drive.Name == disk[0] + "\\" && drive.TotalFreeSpace / (1024 * 1024) < 1024*2)
                 {
                     DirectoryInfo root = new DirectoryInfo(path);
-                    var file = root.GetFiles().OrderBy(s => s.CreationTime).FirstOrDefault();
-                    file.Delete();
+                    List<FileInfo> fileList = root.GetFiles().OrderBy(s => s.CreationTime).Take(10).ToList();
+                    foreach (FileInfo file in fileList)
+                    {
+                        file.Delete();
+                    }
                 }
             }
         }
@@ -127,9 +426,25 @@ namespace PlayCamera
         {
             this.MainPanel.Children.Clear();
             this.MainPanel.Children.Add(FourPanel.Instance);
-            this.gdFour.Background = (Brush)bc.ConvertFrom("#A6CFDC");
-            this.gdNine.Background = (Brush)bc.ConvertFrom("#FFFFFF");
+            imgFour.Source = new BitmapImage(new Uri("/Images/FourSelect.png", UriKind.Relative));
+            imgNine.Source = new BitmapImage(new Uri("/Images/Nine.png", UriKind.Relative));
+            //this.gdFour.Background = (Brush)bc.ConvertFrom("#A6CFDC");
+            //this.gdNine.Background = (Brush)bc.ConvertFrom("#FFFFFF");
+            GlobalInfo.Instance.nowPanel = NowPanel.Four;
+            //CameraBindGrid();
         }
+        /// <summary>
+        /// 双击全屏
+        /// </summary>
+        /// <param name="camId"></param>
+        private void Instance_FullScreenEvent(int camId)
+        {
+            FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
+            this.gdMain.Visibility = Visibility.Collapsed;
+            this.gdAll.Children.Add(FullPlayCamera.Instance);
+            FullPlayCamera.Instance.PlayCamera(camId);
+        }
+
         /// <summary>
         /// 9分屏
         /// </summary>
@@ -137,30 +452,628 @@ namespace PlayCamera
         {
             this.MainPanel.Children.Clear();
             this.MainPanel.Children.Add(NinePanel.Instance);
-            this.gdFour.Background = (Brush)bc.ConvertFrom("#FFFFFF");
-            this.gdNine.Background = (Brush)bc.ConvertFrom("#A6CFDC");
+            //this.gdFour.Background = (Brush)bc.ConvertFrom("#FFFFFF");
+            //this.gdNine.Background = (Brush)bc.ConvertFrom("#A6CFDC");
+            imgFour.Source = new BitmapImage(new Uri("/Images/Four.png", UriKind.Relative));
+            imgNine.Source = new BitmapImage(new Uri("/Images/NineSelect.png", UriKind.Relative));
+            GlobalInfo.Instance.nowPanel = NowPanel.Nine;
+            //CameraBindGrid();
         }
         /// <summary>
         /// 退出
         /// </summary>
         private void ExitImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("确认退出？", "提示", MessageBoxButton.OKCancel);
-            this.Close();
+            MessageBoxResult result = System.Windows.MessageBox.Show("确认退出？", "提示", MessageBoxButton.OKCancel);
+            if(result == MessageBoxResult.OK) this.Close();
         }
-
+        /// <summary>
+        /// 全屏
+        /// </summary>
         private void FullImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
             this.gdMain.Visibility = Visibility.Collapsed;
             this.gdAll.Children.Add(FullPlayCamera.Instance);
+            Grid dg = GlobalInfo.Instance.SelectGrid;
+            if (dg != null && dg.Tag is ICameraFactory)
+            {
+                FullPlayCamera.Instance.PlayCamera((dg.Tag as ICameraFactory).Info.ID);
+            }
         }
-
+        /// <summary>
+        /// 取消全屏
+        /// </summary>
         private void Instance_CanelFullScreenEvent()
         {
             FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
             this.gdMain.Visibility = Visibility.Visible;
             this.gdAll.Children.Remove(FullPlayCamera.Instance);
         }
+        /// <summary>
+        /// 播放摄像头更改图标
+        /// </summary>
+        /// <param name="camId">摄像头Id</param>
+        /// <param name="isPlay">播放成功</param>
+        private void Instance_IsCameraPlayEvent(int camId, bool isPlay)
+        {
+            //Node node = FindPlayNode(GlobalInfo.Instance.CamList, camId);
+            //if (node != null)
+            //{
+            //    if (isPlay)
+            //    {
+            //        node.NodeImg = "/Images/Pause.png";
+            //    }
+            //    else
+            //    {
+            //        node.NodeImg = "/Images/Play.png";
+            //    }
+            //}
+            //this.tvCamera.ItemsSource = null;
+            //this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            List<int> playIdList = new List<int>();
+            if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
+            {
+                foreach (Grid gd in GlobalInfo.Instance.fourGdList)
+                {
+                    if (gd.Tag is ICameraFactory)
+                    {
+                        bool play = (gd.Tag as ICameraFactory).Info.IsPlay;
+                        if (play) playIdList.Add((gd.Tag as ICameraFactory).Info.ID);
+                    }
+                }
+            }
+
+            FindPlayNode(GlobalInfo.Instance.CamList, playIdList);
+            //this.tvCamera.ItemsSource = null;
+            //this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            //ExpandAllItems(this.tvCamera);
+            //foreach (Image image in FindVisualChildren<Image>(this.lbCamera))
+            //{
+            //    if (image.Tag != null && image.Tag.ToString() == camId.ToString())
+            //    {
+            //        if (isPlay)
+            //        {
+            //            path = "/Images/Pause.png";
+            //        }
+            //        else
+            //        {
+            //            path = "/Images/Play.png";
+            //        }
+            //        var uriSource = new Uri(path, UriKind.Relative);
+            //        image.Source = new BitmapImage(uriSource);
+            //        break;
+            //    }
+            //}
+        }
+
+        private void ExpandAllItems(ItemsControl control)
+        {
+            if (control == null)
+            {
+                return;
+            }
+
+            foreach (Object item in control.Items)
+            {
+
+                System.Windows.Controls.TreeViewItem treeItem = control.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+
+                if (treeItem == null || !treeItem.HasItems)
+                {
+                    continue;
+                }
+
+                treeItem.IsExpanded = true;
+                ExpandAllItems(treeItem as ItemsControl);
+            }
+        }
+        private void FindPlayNode(List<Node> nodeList, List<int> playIdList)
+        {
+            foreach (Node node in nodeList)
+            {
+                if (node.Tag is CameraInfo)
+                {
+                    if (playIdList.Contains(node.NodeId))
+                        node.NodeImg = "/Images/Pause.png";
+                    else
+                        node.NodeImg = "/Images/Play.png";
+                }
+                else
+                {
+                    if (node.Nodes != null && node.Nodes.Count > 0)
+                    {
+                        FindPlayNode(node.Nodes, playIdList);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// 选择摄像头
+        /// </summary>
+        /// <param name="camId">摄像头ID</param>
+        private void Instance_SelectCameraEvent(int camId)
+        {
+            SelectTheCurrentNode(camId);
+        }
+
+
+        /// <summary>
+        ///  查找子元素
+        /// </summary>
+        public IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+
+        private void lbCamera_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (Border bd in FindVisualChildren<Border>(FourPanel.Instance.gdMain))
+            {
+                var bc = new BrushConverter();
+                //if (bd.Tag != null && bd.Tag.ToString() == (this.lbCamera.SelectedIndex +1).ToString())
+                //{
+                //    bd.BorderBrush = (Brush)bc.ConvertFrom("#002DFF");
+                //}
+                //else
+                //{
+                //    bd.BorderBrush = (Brush)bc.ConvertFrom("#686868");
+                //}
+            }
+        }
+        /// <summary>
+        /// 双击播放或者停止摄像头
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MouseDown_PlayCamera(object sender, MouseButtonEventArgs e)
+        {
+            int tag = int.Parse((sender as StackPanel).Tag.ToString());
+            if (e.ClickCount == 2)
+            {
+                if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
+                {
+                    Grid gdfour = GlobalInfo.Instance.fourGdList.Where(w => w.Tag.ToString() == tag.ToString()).FirstOrDefault();
+                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == tag).FirstOrDefault();
+                    if (gdfour != null && camera != null)
+                    {
+                        if (camera.Info.IsPlay)
+                        {
+                            FourPanel.Instance.StopCamera(gdfour, camera);
+                        }
+                        else
+                        {
+                            FourPanel.Instance.PlaySelectCamera(gdfour, camera);
+                        }
+                    }
+                }
+                else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
+                {
+                    Grid gdnine = GlobalInfo.Instance.nineGdList.Where(w => w.Tag.ToString() == tag.ToString()).FirstOrDefault();
+                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == tag).FirstOrDefault();
+                    if (gdnine != null && camera != null)
+                    {
+                        if (camera.Info.IsPlay)
+                        {
+                            NinePanel.Instance.StopCamera(gdnine, camera);
+                        }
+                        else
+                        {
+                            NinePanel.Instance.PlaySelectCamera(gdnine, camera);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (firstCol.Width.Value > 0)
+            {
+                firstCol.Width = new System.Windows.GridLength(0);
+            }
+            else
+            {
+                firstCol.Width = new GridLength(1, GridUnitType.Star);
+            }
+        }
+        /// <summary>
+        /// 添加分组
+        /// </summary>
+        private void AddGroup_Click(object sender, RoutedEventArgs e)
+        {
+            AddOrModifyGroup addOrModifyGroup = new AddOrModifyGroup();
+            addOrModifyGroup.InitWin("添加分组", new CameraGroup() { Id = 0, Name = string.Empty });
+            addOrModifyGroup.AddGroupEvent += Main_AddGroupEvent;
+            addOrModifyGroup.ShowDialog();
+        }
+        /// <summary>
+        /// 添加分组回调事件
+        /// </summary>
+        /// <param name="group"></param>
+        private void Main_AddGroupEvent(CameraGroup group)
+        {
+            string sql = string.Format("Insert Into CameraGroup (Name) Values ('{0}')", group.Name);
+            int groupID = SQLiteFac.Instance.InsertWithBack(sql);
+            //sql = "Select Max(Id) From CameraGroup";
+            //List<CameraGroup> nowgroup = SQLiteFac.Instance.ExecuteList<CameraGroup>(sql);
+            //spCameraList.Children.Add(InitExpander(group));
+            group.Id = groupID;
+            AddGroup(group,GlobalInfo.Instance.CamList[0]);
+            this.tvCamera.ItemsSource = null;
+            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+        }
+        /// <summary>
+        /// 修改分组事件
+        /// </summary>
+        private void ModifyGroup_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(GlobalInfo.Instance.SelectNode.Tag is CameraGroup))
+            {
+                System.Windows.MessageBox.Show("未选中组");
+                return;
+            }
+            AddOrModifyGroup addOrModifyGroup = new AddOrModifyGroup();
+            addOrModifyGroup.InitWin("修改分组", GlobalInfo.Instance.SelectNode.Tag as CameraGroup);
+            addOrModifyGroup.ModifyGroupEvent += Main_ModifyGroupEvent;
+            addOrModifyGroup.ShowDialog();
+        }
+        /// <summary>
+        /// 修改分组回调
+        /// </summary>
+        /// <param name="group"></param>
+        private void Main_ModifyGroupEvent(CameraGroup group)
+        {
+            string sql = string.Format("Update CameraGroup Set Name= '{0}' Where Id= '{1}'", group.Name, group.Id);
+            SQLiteFac.Instance.ExecuteNonQuery(sql);
+            GlobalInfo.Instance.CamList.Where(w => w.NodeId == group.Id).FirstOrDefault().NodeName = group.Name;
+            this.tvCamera.ItemsSource = null;
+            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            //foreach (var child in spCameraList.Children)
+            //{
+            //    if ((child is Expander) && (child as Expander).Tag != null && ((child as Expander).Tag as CameraGroup).Id == group.Id)
+            //    {
+            //        ((child as Expander).Tag as CameraGroup).Name = group.Name;
+            //        (child as Expander).Header = group.Name;
+            //        break;
+            //    }
+            //}
+        }
+        /// <summary>
+        /// 删除分组
+        /// </summary>
+        private void DelGroup_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(GlobalInfo.Instance.SelectNode.Tag is CameraGroup))
+            {
+                System.Windows.MessageBox.Show("未选中组");
+                return;
+            }
+            string sql = string.Format("Delete From CameraGroup Where Id= '{0}'", GlobalInfo.Instance.SelectNode.NodeId);
+            SQLiteFac.Instance.ExecuteNonQuery(sql);
+            GlobalInfo.Instance.CamList.Remove(GlobalInfo.Instance.SelectNode);
+            this.tvCamera.ItemsSource = null;
+            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            //foreach (var child in spCameraList.Children)
+            //{
+            //    if ((child is Expander) && (child as Expander).Tag != null && (child as Expander).Tag == GlobalInfo.Instance.SelectGroup)
+            //    {
+            //        spCameraList.Children.Remove(child as Expander);
+            //        //GlobalInfo.Instance.expanderList.Remove(child as Expander);
+            //        break;
+            //    }
+            //}
+        }
+
+        /// <summary>
+        /// 添加摄像头
+        /// </summary>
+        private void AddCamera_Click(object sender, RoutedEventArgs e)
+        {
+            Node node = GetRootNode(GlobalInfo.Instance.SelectNode);
+            if (!(node.Tag is CameraGroup))
+            {
+                System.Windows.MessageBox.Show("选择分组出错");
+                return;
+            }
+
+            AddOrModifyCamera addOrModifyCamera = new AddOrModifyCamera();
+            addOrModifyCamera.InitWin("添加摄像头", node.Tag as CameraGroup, null);
+            addOrModifyCamera.AddCameraEvent += Main_AddCameraEvent;
+            addOrModifyCamera.ShowDialog();
+        }
+        /// <summary>
+        /// 获取根节点
+        /// </summary>
+        /// <param name="node">当前节点</param>
+        private Node GetRootNode(Node node)
+        {
+            if (node.Parent != null)
+            {
+                return node.Parent;
+            }
+            return node;
+        }
+
+        /// <summary>
+        /// 添加摄像头事件回调
+        /// </summary>
+        /// <param name="group"></param>
+        private void Main_AddCameraEvent(CameraInfo info)
+        {
+            string sql = string.Format("Insert Into CameraInfo (CHLID,REMOTECHANNLE,REMOTEIP,REMOTEPORT,REMOTEUSER,REMOTEPWD,NPLAYPORT,PTZPORT,CAMERATYPE,CameraName,CamGroup) " +
+                "Values ('1', '1', '{0}', '{1}', '{2}', '{3}', '1', '8091', '{4}', '{5}', '{6}')",
+                info.REMOTEIP,info.REMOTEPORT,info.REMOTEUSER,info.REMOTEPWD,info.CAMERATYPE,info.CAMERANAME,info.CamGroup);
+            int id = SQLiteFac.Instance.InsertWithBack(sql);
+            info.Id = id;
+            Node camnode = new Node();
+            camnode.NodeId = info.Id;
+            camnode.NodeName = info.CAMERANAME;
+            camnode.NodeImg = "/Images/Play.png";
+            camnode.Tag = info;
+            // 选择的是摄像头不是组
+            if (!(GlobalInfo.Instance.SelectNode.Tag is CameraGroup))
+            {
+                GlobalInfo.Instance.SelectGroupNode = GetRootNode(GlobalInfo.Instance.SelectNode);
+            }
+            camnode.Parent = GlobalInfo.Instance.SelectGroupNode;
+            GlobalInfo.Instance.SelectGroupNode.Nodes.Add(camnode);
+            this.tvCamera.ItemsSource = null;
+            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            //ChannelInfo chInfo = CameraInfoToChannelInfo(info);
+            //GlobalInfo.Instance.ChList.Add(chInfo);
+            //CameraWithPlayPanel tmp = new CameraWithPlayPanel();
+            //switch (info.CAMERATYPE)
+            //{
+            //    case 0:
+            //        {
+            //            tmp.camera = new UIControl_HBGK1(chInfo);
+            //            break;
+            //        }
+            //    case 1:
+            //        {
+            //            tmp.camera = new YiTongCameraControl(chInfo);
+            //            break;
+            //        }
+            //}
+            //GlobalInfo.Instance.cameraWithPlayPanelList.Add(tmp);
+            //foreach (System.Windows.Controls.ListBox item in GlobalInfo.Instance.listBoxeList)
+            //{
+            //    if (item.Name == "lb" + info.CamGroup)
+            //    {
+            //        item.Items.Add(InitListBoxItem(tmp));
+            //    }
+            //}
+        }
+
+        private void ModifyCamera_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(GlobalInfo.Instance.SelectNode.Tag is CameraInfo))
+            {
+                System.Windows.MessageBox.Show("未选中摄像头");
+                return;
+            }
+            Node node = GetRootNode(GlobalInfo.Instance.SelectNode);
+            AddOrModifyCamera addOrModifyCamera = new AddOrModifyCamera();
+            addOrModifyCamera.InitWin("修改摄像头", node.Tag as CameraGroup, GlobalInfo.Instance.SelectNode.Tag as CameraInfo);
+            addOrModifyCamera.ModifyCameraEvent += Main_ModifyCameraEvent;
+            addOrModifyCamera.ShowDialog();
+        }
+
+        /// <summary>
+        /// 修改摄像头事件回调
+        /// </summary>
+        /// <param name="group"></param>
+        private void Main_ModifyCameraEvent(CameraInfo info)
+        {
+            string sql = string.Format("update CameraInfo Set REMOTEIP = '{0}',REMOTEPORT='{1}',REMOTEUSER='{2}',REMOTEPWD='{3}',CAMERATYPE='{4}',CameraName='{5}',CamGroup='{6}' Where Id={7} ",
+                info.REMOTEIP, info.REMOTEPORT, info.REMOTEUSER, info.REMOTEPWD, info.CAMERATYPE, info.CAMERANAME, info.CamGroup, info.Id);
+            SQLiteFac.Instance.ExecuteNonQuery(sql);
+            GlobalInfo.Instance.SelectNode.Tag = info;
+            GlobalInfo.Instance.SelectNode.NodeName = info.CAMERANAME;
+            this.tvCamera.ItemsSource = null;
+            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            //GlobalInfo.Instance.cameraWithPlayPanelList.RemoveAll(w=>w.camera.Info.ID == info.camera.Info.ID);
+            //GlobalInfo.Instance.cameraWithPlayPanelList.Add(info);
+            //foreach (System.Windows.Controls.ListBox item in GlobalInfo.Instance.listBoxeList)
+            //{
+            //    if (item.Name == "lb" + info.camera.Info.CamGroup)
+            //    {
+            //       GlobalInfo.Instance.ListBoxItemList.Where(w => (w.Tag as CameraWithPlayPanel).camera.Info.ID == info.camera.Info.ID).FirstOrDefault().Tag = info;
+            //        GlobalInfo.Instance.textBlockList.Where(w => (w.Tag as CameraWithPlayPanel).camera.Info.ID == info.camera.Info.ID).FirstOrDefault().Tag = info;
+            //        GlobalInfo.Instance.textBlockList.Where(w => (w.Tag as CameraWithPlayPanel).camera.Info.ID == info.camera.Info.ID).FirstOrDefault().Text = info.camera.Info.CameraName;
+            //    }
+            //}
+        }
+
+        private void DelCamera_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(GlobalInfo.Instance.SelectNode.Tag is CameraInfo))
+            {
+                System.Windows.MessageBox.Show("未选中摄像头");
+                return;
+            }
+            string sql = string.Format("Delete From CameraInfo Where Id= '{0}'", (GlobalInfo.Instance.SelectNode.Tag as CameraInfo).Id);
+            SQLiteFac.Instance.ExecuteNonQuery(sql);
+            Node node = GetRootNode(GlobalInfo.Instance.SelectNode);
+            foreach (Node tmp in GlobalInfo.Instance.CamList)
+            {
+                if (tmp == node)
+                {
+                    tmp.Nodes.Remove(GlobalInfo.Instance.SelectNode);
+                }
+            }
+            this.tvCamera.ItemsSource = null;
+            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            //foreach (System.Windows.Controls.ListBox item in GlobalInfo.Instance.listBoxeList)
+            //{
+            //    //ListBoxItem lbItem =  GlobalInfo.Instance.ListBoxItemList.Where(w => (w.Tag as CameraWithPlayPanel).camera.Info.ID == GlobalInfo.Instance.SelectCamera.camera.Info.ID).FirstOrDefault();
+            //    if (item.Items.Contains(GlobalInfo.Instance.ListBoxItemList.Where(w => (w.Tag as CameraWithPlayPanel).camera.Info.ID == GlobalInfo.Instance.SelectCamera.camera.Info.ID).FirstOrDefault()))
+            //    {
+            //        item.Items.Remove(GlobalInfo.Instance.ListBoxItemList.Where(w => (w.Tag as CameraWithPlayPanel).camera.Info.ID == GlobalInfo.Instance.SelectCamera.camera.Info.ID).FirstOrDefault());
+            //    }
+            //}
+        }
+
+        private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
+                {
+                    if (GlobalInfo.Instance.SelectGrid != null && GlobalInfo.Instance.SelectNode != null)
+                    {
+                        CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                        ICameraFactory camera =  GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                        if (camera != null)
+                        {
+                            FourPanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                        }
+                    }
+                }
+                else
+                {
+                    
+                }
+            }
+        }
+        /// <summary>
+        /// 选中摄像头节点
+        /// </summary>
+        /// <param name="SelectID"></param>
+        private void SelectTheCurrentNode(int SelectID)
+        {
+            if (this.tvCamera.Items != null && this.tvCamera.Items.Count > 0)
+            {
+                foreach (var item in this.tvCamera.Items)
+                {
+                    DependencyObject dependencyObject = this.tvCamera.ItemContainerGenerator.ContainerFromItem(item);
+                    if (dependencyObject != null)//第一次打开程序，dependencyObject为null，会出错
+                    {
+                        TreeViewItem tvi = (TreeViewItem)dependencyObject;
+                        if (((tvi.Header as Node).Tag is CameraInfo) && (tvi.Header as Node).NodeId == SelectID)
+                        {
+                            tvi.IsSelected = true;
+                            tvi.Focus();
+                        }
+                        else
+                        {
+                            SetNodeSelected(tvi, SelectID);
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// 递归选中树节点
+        /// </summary>
+        /// <param name="Item"></param>
+        private void SetNodeSelected(TreeViewItem Item, int SelectID)
+        {
+            foreach (var item in Item.Items)
+            {
+                DependencyObject dependencyObject = Item.ItemContainerGenerator.ContainerFromItem(item);
+                if (dependencyObject != null)
+                {
+                    TreeViewItem treeViewItem = (TreeViewItem)dependencyObject;
+                    if (((treeViewItem.Header as Node).Tag is CameraInfo) && (treeViewItem.Header as Node).NodeId == SelectID)
+                    {
+                        treeViewItem.IsSelected = true;
+                        treeViewItem.Focus();
+                    }
+                    else
+                    {
+                        treeViewItem.IsSelected = false;
+                        if (treeViewItem.HasItems)
+                        {
+                            SetNodeSelected(treeViewItem, SelectID);
+                        }
+                    }
+                }
+            }
+        }
     }
+
+    public class Node
+    {
+        public Node()
+        {
+            this.IsDeleted = false;
+            this.Nodes = new List<Node>();
+        }
+        /// <summary>
+        /// 节点ID
+        /// </summary>
+        public int NodeId { get; set; }
+        /// <summary>
+        ///  节点名称
+        /// </summary>
+        public string NodeName { get; set; }
+
+        /// <summary>
+        /// 节点图片
+        /// </summary>
+        public string NodeImg { get; set; }
+
+        /// <summary>
+        /// 被删除
+        /// </summary>
+        public bool IsDeleted { get; set; }
+        /// <summary>
+        /// 绑定类型
+        /// </summary>
+        public object Tag { get; set; }
+
+        /// <summary>
+        /// 子节点集合
+        /// </summary>
+        public List<Node> Nodes { get; set; }
+        /// <summary>
+        /// 父节点
+        /// </summary>
+        public Node Parent { get; set; }
+        /// <summary>
+        /// 是否展开
+        /// </summary>
+        public bool IsExpand { get; set; }
+        /// <summary>
+        /// 是否处于播放状态
+        /// </summary>
+        public bool IsPlay { get; set; }
+    }
+    //public class ViewModel : INotifyPropertyChanged
+    //{
+    //    public event PropertyChangedEventHandler PropertyChanged;
+    //    private List<Node> treenodes = new List<Node>();
+    //    public List<Node> TreeNodes
+    //    {
+    //        get { return treenodes; }
+    //        set
+    //        {
+    //            treenodes = value;
+    //            if (PropertyChanged != null)
+    //                PropertyChanged(this, new PropertyChangedEventArgs("TreeNodes"));
+    //        }
+    //    }
+
+    //    public ViewModel()
+    //    {
+            
+    //    }
+    //}
 }

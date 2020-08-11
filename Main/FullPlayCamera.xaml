@@ -12,8 +12,8 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Border Grid.Row="0" BorderBrush="#686868" BorderThickness="1">
-            <Viewbox x:Name="viewboxCameral4" Stretch="Uniform">
-                <Grid x:Name="gridCamera4">
+            <Viewbox x:Name="viewboxCameral" Stretch="Uniform">
+                <Grid x:Name="gridCamera">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>

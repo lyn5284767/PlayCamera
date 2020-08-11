@@ -334,5 +334,39 @@ namespace PlayCamera
             }
             return ts;
         }
+
+        /// <summary>插入  
+        /// 返回刚刚插入的ID  
+        /// </summary>  
+        /// <param name="groupname"></param>  
+        /// <param name="gid"></param>  
+        /// <returns></returns>  
+        public int InsertWithBack(string sql)
+        {
+            string tmpsql = sql +";select last_insert_rowid()";
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=Monitor.db3;Version=3;"))
+            {
+                SQLiteCommand cmd = new SQLiteCommand(tmpsql, m_dbConnection);
+                try
+                {
+                    if (cmd.Connection.State == ConnectionState.Closed)
+                        cmd.Connection.Open();
+                    object result = cmd.ExecuteScalar();
+                    cmd.Connection.Close();
+                    cmd.Dispose();
+                    return int.Parse(result.ToString());
+                }
+                catch (Exception ex)
+                {
+           
+                    //Log.Log4Net.AddLog(ex.ToString(), Log.InfoLevel.ERROR);
+                    return 0;
+                }
+                finally
+                {
+
+                }
+            }
+        }
     }
 }

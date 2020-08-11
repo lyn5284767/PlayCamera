@@ -424,7 +424,7 @@ namespace HBGKTest.YiTongCamera
             {
                 if (FullScreenEvent != null)
                 {
-                    FullScreenEvent();
+                    FullScreenEvent(this.Info.ID);
                 }
             }
             else
@@ -442,7 +442,16 @@ namespace HBGKTest.YiTongCamera
         {
             if (FullScreenEvent != null)
             {
-                FullScreenEvent();
+                FullScreenEvent(this.Info.ID);
+            }
+        }
+
+        public event SelectCamera SelectCameraEvent;
+        private void VideoPanel_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (SelectCameraEvent != null)
+            {
+                SelectCameraEvent(this.Info.ID);
             }
         }
     }

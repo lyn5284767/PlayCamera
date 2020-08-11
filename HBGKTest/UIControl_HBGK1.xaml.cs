@@ -75,7 +75,7 @@ namespace HBGKTest
         /// </summary>
         private string speed = "6";
 
-        
+        public UIControl_HBGK1() { }
         public UIControl_HBGK1(ChannelInfo info)
         {
             System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;
@@ -870,15 +870,6 @@ namespace HBGKTest
             return 0;
         }
 
-
-        private void VideoPanel_MouseClick(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void VideoPanel_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-        }
-
         private void VideoPanel_MouseDown(object sender, MouseEventArgs e)
         {
             //VideoPanel.BorderStyle = BorderStyle.Fixed3D;
@@ -972,7 +963,7 @@ namespace HBGKTest
             {
                 if (FullScreenEvent != null)
                 {
-                    FullScreenEvent();
+                    FullScreenEvent(this.Info.ID);
                 }
             }
             else
@@ -990,7 +981,15 @@ namespace HBGKTest
         {
             if (FullScreenEvent != null)
             {
-                FullScreenEvent();
+                FullScreenEvent(this.Info.ID);
+            }
+        }
+        public event SelectCamera SelectCameraEvent;
+        private void VideoPanel_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (SelectCameraEvent != null)
+            {
+                SelectCameraEvent(this.Info.ID);
             }
         }
     }

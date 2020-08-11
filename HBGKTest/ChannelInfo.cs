@@ -150,10 +150,20 @@ namespace HBGKTest
         }
 
         /// <summary>
-        /// 摄像头类型 0-  ;1-一通
+        /// 摄像头类型 0-宏英  ;1-一通
         /// </summary>
         public int CameraType { get; set; }
-
+        /// <summary>
+        /// 播放状态 true-播放；false-停止
+        /// </summary>
         public bool IsPlay { get; set; }
+        /// <summary>
+        /// 摄像头名
+        /// </summary>
+        public string CameraName { get; set; }
+        /// <summary>
+        /// 摄像头分组
+        /// </summary>
+        public int CamGroup { get; set; }
     }
 }

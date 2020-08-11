@@ -7,79 +7,105 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"  WindowStyle="None" WindowState="Maximized">
     <Window.Resources>
-
     </Window.Resources>
     <Grid Name="gdAll">
         <Grid Name="gdMain">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" Name="firstCol"/>
                 <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
-            <ListBox Grid.Column="0">
+            <!--<ListBox Grid.Column="0" Name="lbCamera" SelectedIndex="0" SelectionChanged="lbCamera_SelectionChanged">
                 <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="1">
                         <TextBlock>摄像头1</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Name="camerOne" Source="/Images/Play.png" Width="30" Height="30" Tag="1">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="2">
                         <TextBlock>摄像头2</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Source="/Images/Play.png" Width="30" Height="30" Tag="2">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="3">
                         <TextBlock>摄像头3</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Source="/Images/Play.png" Width="30" Height="30" Tag="3">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="4">
                         <TextBlock>摄像头4</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Source="/Images/Play.png" Width="30" Height="30" Tag="4">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
-                <ListBoxItem FontSize="24" Margin="0,10,0,0">
+                <ListBoxItem FontSize="24" Margin="0,10,0,0" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="5">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock>摄像头5</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Source="/Images/Play.png" Width="30" Height="30" Tag="5">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="6">
                         <TextBlock>摄像头6</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Source="/Images/Play.png" Width="30" Height="30" Tag="6">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="7">
                         <TextBlock>摄像头7</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Source="/Images/Play.png" Width="30" Height="30" Tag="7">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="8">
                         <TextBlock>摄像头8</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Source="/Images/Play.png" Width="30" Height="30" Tag="8">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem FontSize="24" Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" MouseLeftButtonDown="MouseDown_PlayCamera" Tag="9">
                         <TextBlock>摄像头9</TextBlock>
-                        <Image Source="/Images/Pause.png" Width="30" Height="30">
+                        <Image Source="/Images/Play.png" Width="30" Height="30" Tag="9">
                         </Image>
                     </StackPanel>
                 </ListBoxItem>
-            </ListBox>
+            </ListBox>-->
+            <StackPanel Grid.Column="0" Name="spCameraList">
+                <StackPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="新增分组" Click="AddGroup_Click"/>
+                        <MenuItem Header="修改分组" Click="ModifyGroup_Click"/>
+                        <MenuItem Header="删除分组" Click="DelGroup_Click"/>
+                        <MenuItem Header="新增摄像头" Click="AddCamera_Click"/>
+                        <MenuItem Header="修改摄像头" Click="ModifyCamera_Click"/>
+                        <MenuItem Header="删除摄像头" Click="DelCamera_Click"/>
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
+                <TreeView Name="tvCamera" SelectedItemChanged="tvCamera_SelectedItemChanged" ItemsSource="{Binding TreeNodes}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type local:Node}" ItemsSource="{Binding Nodes,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" x:Name="treeBind">
+                            <StackPanel Orientation="Horizontal" Margin="0,2,0,2" MouseDown="StackPanel_MouseDown">
+                                <TextBlock Text="{Binding NodeName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" FontSize="24" FontFamily="微软雅黑"/>
+                                <Image Source="{Binding NodeImg,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="30" Height="30"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.Resources>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+            </StackPanel>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -88,11 +114,14 @@
                 <Grid Name="MainPanel" Grid.Row="0"></Grid>
                 <Border Grid.Row="1" BorderBrush="#686868" BorderThickness="1,1,0,0">
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Grid Background="LightBlue" Name="gdFour" Margin="10,0,10,0">
-                            <Image Source="/Images/Four.png" MouseLeftButtonDown="FourImage_MouseLeftButtonDown"/>
+                        <Grid Name="cameraList" Margin="10,0,10,0">
+                            <Image Source="/Images/List.png" MouseLeftButtonDown="Image_MouseLeftButtonDown"/>
+                        </Grid>
+                        <Grid Name="gdFour" Margin="10,0,10,0">
+                            <Image Name="imgFour" Source="/Images/FourSelect.png" MouseLeftButtonDown="FourImage_MouseLeftButtonDown"/>
                         </Grid>
                         <Grid Name="gdNine" Margin="10,0,10,0">
-                            <Image Source="/Images/Nine.png" MouseLeftButtonDown="NineImage_MouseLeftButtonDown"/>
+                            <Image Name="imgNine" Source="/Images/Nine.png" MouseLeftButtonDown="NineImage_MouseLeftButtonDown"/>
                         </Grid>
                         <Image Source="/Images/FullScreen.png" Margin="20,0,0,0" MouseLeftButtonDown="FullImage_MouseLeftButtonDown"/>
                         <Image Source="/Images/Exit.png" Margin="20,0,0,0" MouseLeftButtonDown="ExitImage_MouseLeftButtonDown"/>

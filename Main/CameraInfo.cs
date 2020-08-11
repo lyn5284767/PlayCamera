@@ -6,7 +6,7 @@ using System.Text;
 namespace PlayCamera
 {
     /// <summary>
-    /// 摄像头西悉尼
+    /// 摄像头信息
     /// </summary>
     public class CameraInfo
     {
@@ -50,5 +50,27 @@ namespace PlayCamera
         /// 摄像头类型0:宏英 1：一通
         /// </summary>
         public int CAMERATYPE { get; set; }
+        /// <summary>
+        /// 摄像头名
+        /// </summary>
+        public string CAMERANAME { get; set; }
+        /// <summary>
+        /// 所属分组
+        /// </summary>
+        public int CamGroup { get; set; }
+    }
+    /// <summary>
+    /// 摄像头组
+    /// </summary>
+    public class CameraGroup
+    {
+        /// <summary>
+        /// 组ID
+        /// </summary>
+        public int Id { get; set; }
+        /// <summary>
+        /// 组名
+        /// </summary>
+        public string Name { get; set; }
     }
 }

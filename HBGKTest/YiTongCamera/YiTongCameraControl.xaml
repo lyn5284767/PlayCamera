@@ -9,7 +9,7 @@
              d:DesignHeight="100" d:DesignWidth="100">
     <Grid>
         <WindowsFormsHost>
-            <wf:Panel x:Name="VideoPanel" MouseDoubleClick="VideoPanel_MouseDoubleClick"></wf:Panel>
+            <wf:Panel x:Name="VideoPanel" MouseDoubleClick="VideoPanel_MouseDoubleClick" MouseClick="VideoPanel_MouseClick"></wf:Panel>
         </WindowsFormsHost>
     </Grid>
 </UserControl>

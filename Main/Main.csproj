@@ -98,6 +98,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddOrModifyCamera.xaml.cs">
+      <DependentUpon>AddOrModifyCamera.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AddOrModifyGroup.xaml.cs">
+      <DependentUpon>AddOrModifyGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CameraWithPlayPanel.cs" />
     <Compile Include="FourPanel.xaml.cs">
       <DependentUpon>FourPanel.xaml</DependentUpon>
     </Compile>
@@ -113,6 +120,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SQLiteFac.cs" />
+    <Page Include="AddOrModifyCamera.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddOrModifyGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FourPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -180,6 +195,15 @@
   <ItemGroup>
     <Resource Include="Images\Pause.png" />
     <Resource Include="Images\Play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\List.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\FourSelect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\NineSelect.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

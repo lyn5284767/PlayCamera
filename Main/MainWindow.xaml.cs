@@ -741,7 +741,7 @@ namespace PlayCamera
         {
             string sql = string.Format("Update CameraGroup Set Name= '{0}' Where Id= '{1}'", group.Name, group.Id);
             SQLiteFac.Instance.ExecuteNonQuery(sql);
-            GlobalInfo.Instance.CamList.Where(w => w.NodeId == group.Id).FirstOrDefault().NodeName = group.Name;
+            GlobalInfo.Instance.CamList[0].Nodes.Where(w => w.NodeId == group.Id).FirstOrDefault().NodeName = group.Name;
             this.tvCamera.ItemsSource = null;
             this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //foreach (var child in spCameraList.Children)
@@ -766,7 +766,7 @@ namespace PlayCamera
             }
             string sql = string.Format("Delete From CameraGroup Where Id= '{0}'", GlobalInfo.Instance.SelectNode.NodeId);
             SQLiteFac.Instance.ExecuteNonQuery(sql);
-            GlobalInfo.Instance.CamList.Remove(GlobalInfo.Instance.SelectNode);
+            GlobalInfo.Instance.CamList[0].Nodes.Remove(GlobalInfo.Instance.SelectNode);
             this.tvCamera.ItemsSource = null;
             this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //foreach (var child in spCameraList.Children)
@@ -827,12 +827,21 @@ namespace PlayCamera
             camnode.NodeImg = "/Images/Play.png";
             camnode.Tag = info;
             // 选择的是摄像头不是组
-            if (!(GlobalInfo.Instance.SelectNode.Tag is CameraGroup))
+            if (GlobalInfo.Instance.SelectNode.Tag is CameraInfo)
             {
                 GlobalInfo.Instance.SelectGroupNode = GetRootNode(GlobalInfo.Instance.SelectNode);
+                camnode.Parent = GlobalInfo.Instance.SelectGroupNode;
+                GlobalInfo.Instance.SelectGroupNode.Nodes.Add(camnode);
             }
-            camnode.Parent = GlobalInfo.Instance.SelectGroupNode;
-            GlobalInfo.Instance.SelectGroupNode.Nodes.Add(camnode);
+            else if (GlobalInfo.Instance.SelectNode.Tag is CameraGroup)
+            {
+                camnode.Parent = GlobalInfo.Instance.SelectNode;
+                GlobalInfo.Instance.SelectNode.Nodes.Add(camnode);
+            }
+            else
+            {
+                
+            }
             this.tvCamera.ItemsSource = null;
             this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //ChannelInfo chInfo = CameraInfoToChannelInfo(info);
@@ -946,11 +955,25 @@ namespace PlayCamera
                         }
                     }
                 }
-                else
-                {
-                    
-                }
             }
+        }
+
+        private void TreeViewItem_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var treeViewItem = VisualUpwardSearch<TreeViewItem>(e.OriginalSource as DependencyObject) as TreeViewItem;
+            if (treeViewItem != null)
+            {
+                Node currentNode = treeViewItem.Header as Node;
+                treeViewItem.Focus();
+                e.Handled = true;
+            }
+        }
+        private DependencyObject VisualUpwardSearch<T>(DependencyObject source)
+        {
+            while (source != null && source.GetType() != typeof(T))
+                source = VisualTreeHelper.GetParent(source);
+
+            return source;
         }
         /// <summary>
         /// 选中摄像头节点

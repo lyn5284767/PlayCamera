@@ -41,13 +41,19 @@ namespace PlayCamera
                 return _instance;
             }
         }
-
+        public int CamId { get; set; }
         public delegate void CanelFullScreenHandler();
 
         public event CanelFullScreenHandler CanelFullScreenEvent;
         public FullPlayCamera()
         {
             InitializeComponent();
+            this.Loaded += FullPlayCamera_Loaded;
+        }
+
+        private void FullPlayCamera_Loaded(object sender, RoutedEventArgs e)
+        {
+            PlayCamera(this.CamId);
         }
 
         public void PlayCamera(int camId)
@@ -64,9 +70,9 @@ namespace PlayCamera
                     if (cam.InitCamera(camera.Info))
                     {
                         gridCamera.Children.Clear();
-                        gridCamera.Children.Clear();
                         gridCamera.Children.Add(cam);
                     }
+                    cam.SetSize(this.ActualHeight, this.ActualWidth);
                 }
                 else if (camera is YiTongCameraControl)
                 {
@@ -75,9 +81,9 @@ namespace PlayCamera
                     if (cam.InitCamera(camera.Info))
                     {
                         gridCamera.Children.Clear();
-                        gridCamera.Children.Clear();
                         gridCamera.Children.Add(cam);
                     }
+                    cam.SetSize(this.ActualHeight, this.ActualWidth);
                 }
                 else
                 {

@@ -441,8 +441,16 @@ namespace PlayCamera
         {
             FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
             this.gdMain.Visibility = Visibility.Collapsed;
-            this.gdAll.Children.Add(FullPlayCamera.Instance);
-            FullPlayCamera.Instance.PlayCamera(camId);
+            if (!this.gdAll.Children.Contains(FullPlayCamera.Instance))
+            {
+                this.gdAll.Children.Add(FullPlayCamera.Instance);
+            }
+            else
+            {
+                this.gdAll.Children.Remove(FullPlayCamera.Instance);
+                this.gdAll.Children.Add(FullPlayCamera.Instance);
+            }
+            FullPlayCamera.Instance.CamId = camId;
         }
 
         /// <summary>
@@ -488,6 +496,14 @@ namespace PlayCamera
         {
             FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
             this.gdMain.Visibility = Visibility.Visible;
+            if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
+            {
+                FourPanel.Instance.PlayCamera();
+            }
+            else
+            {
+                NinePanel.Instance.PlayCamera();
+            }
             this.gdAll.Children.Remove(FullPlayCamera.Instance);
         }
         /// <summary>
@@ -525,6 +541,8 @@ namespace PlayCamera
             }
 
             FindPlayNode(GlobalInfo.Instance.CamList, playIdList);
+            this.tvCamera.ItemsSource = null;
+            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //this.tvCamera.ItemsSource = null;
             //this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //ExpandAllItems(this.tvCamera);
@@ -842,6 +860,20 @@ namespace PlayCamera
             {
                 
             }
+            ChannelInfo chInfo =  CameraInfoToChannelInfo(info);
+            switch (chInfo.CameraType)
+            {
+                case 0:
+                    {
+                        GlobalInfo.Instance.CameraList.Add(new UIControl_HBGK1(chInfo));
+                        break;
+                    }
+                case 1:
+                    {
+                        GlobalInfo.Instance.CameraList.Add(new YiTongCameraControl(chInfo));
+                        break;
+                    }
+            }
             this.tvCamera.ItemsSource = null;
             this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //ChannelInfo chInfo = CameraInfoToChannelInfo(info);
@@ -895,6 +927,7 @@ namespace PlayCamera
             SQLiteFac.Instance.ExecuteNonQuery(sql);
             GlobalInfo.Instance.SelectNode.Tag = info;
             GlobalInfo.Instance.SelectNode.NodeName = info.CAMERANAME;
+            GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault().Info = CameraInfoToChannelInfo(info);
             this.tvCamera.ItemsSource = null;
             this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //GlobalInfo.Instance.cameraWithPlayPanelList.RemoveAll(w=>w.camera.Info.ID == info.camera.Info.ID);
@@ -919,6 +952,7 @@ namespace PlayCamera
             }
             string sql = string.Format("Delete From CameraInfo Where Id= '{0}'", (GlobalInfo.Instance.SelectNode.Tag as CameraInfo).Id);
             SQLiteFac.Instance.ExecuteNonQuery(sql);
+            GlobalInfo.Instance.CameraList.RemoveAll(w => w.Info.ID == (GlobalInfo.Instance.SelectNode.Tag as CameraInfo).Id);
             Node node = GetRootNode(GlobalInfo.Instance.SelectNode);
             foreach (Node tmp in GlobalInfo.Instance.CamList)
             {

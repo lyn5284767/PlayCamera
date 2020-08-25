@@ -45,7 +45,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="2">
             <TextBlock Width="50" FontSize="20" Text="类型:" Margin="10,0,0,0"></TextBlock>
-            <ComboBox Height="30" Width="150"  Name="cbCameraType" SelectedIndex="0">
+            <ComboBox Height="30" Width="150"  Name="cbCameraType" SelectedIndex="0" SelectionChanged="cbCameraType_SelectionChanged">
                 <ComboBoxItem>宏英</ComboBoxItem>
                 <ComboBoxItem>一通</ComboBoxItem>
             </ComboBox>

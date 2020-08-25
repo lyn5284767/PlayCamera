@@ -25,8 +25,10 @@ namespace Main
     {
         private int GroupID { get; set; }
         private CameraInfo CameraInfo { get; set; }
-        public AddOrModifyCamera()
+        private string NowTitle { get; set; }
+        public AddOrModifyCamera(string title)
         {
+            this.NowTitle = title;
             InitializeComponent();
         }
 
@@ -139,6 +141,30 @@ namespace Main
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+        /// <summary>
+        /// 选择不同摄像头厂家补全数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cbCameraType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.NowTitle == "添加摄像头")
+            {
+                ComboBox cb = sender as ComboBox;
+                if (cb.SelectedIndex == 0)
+                {
+                    this.tbCameraPort.Text = "554";
+                    this.tbCameraUser.Text = "admin";
+                    this.tbCameraPwd.Text = "123456";
+                }
+                else if (cb.SelectedIndex == 1)
+                {
+                    this.tbCameraPort.Text = "34567";
+                    this.tbCameraUser.Text = "admin";
+                    this.tbCameraPwd.Text = "";
+                }
+            }
         }
     }
 }

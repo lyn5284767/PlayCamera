@@ -72,17 +72,21 @@ namespace PlayCamera
         /// </summary>
         public void PlayCamera()
         {
-            int groupID = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault().NodeId;
-            List<ICameraFactory> camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
-            for (int i = 0; i < GlobalInfo.Instance.fourGdList.Count; i++)
+            Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
+            if (node != null)
             {
-                if (camList.Count>i)
+                int groupID = node.NodeId;
+                List<ICameraFactory> camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
+                for (int i = 0; i < GlobalInfo.Instance.fourGdList.Count; i++)
                 {
-                    GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], camList[i] });
-                }
-                else
-                {
-                    GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], null });
+                    if (camList.Count > i)
+                    {
+                        GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], camList[i] });
+                    }
+                    else
+                    {
+                        GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], null });
+                    }
                 }
             }
             //if (camList.Count >= 1)
@@ -431,7 +435,14 @@ namespace PlayCamera
             {
                 if (FullScreenEvent != null)
                 {
-                    FullScreenEvent(int.Parse(border.Tag.ToString()));
+                    if (border.Tag == null)
+                    {
+                        System.Windows.MessageBox.Show("未检测到播放摄像头");
+                    }
+                    else
+                    {
+                        FullScreenEvent(int.Parse(border.Tag.ToString()));
+                    }
                 }
             }
         }

@@ -41,6 +41,8 @@ namespace PlayCamera
                 return _instance;
             }
         }
+        public double NowHeight { get; set; }
+        public double NowWidth { get; set; }
         public int CamId { get; set; }
         public delegate void CanelFullScreenHandler();
 
@@ -53,7 +55,9 @@ namespace PlayCamera
 
         private void FullPlayCamera_Loaded(object sender, RoutedEventArgs e)
         {
-            PlayCamera(this.CamId);
+            this.NowHeight = this.ActualHeight;
+            this.NowWidth = this.ActualWidth;
+            //PlayCamera(this.CamId);
         }
 
         public void PlayCamera(int camId)
@@ -88,6 +92,47 @@ namespace PlayCamera
                 else
                 {
                     camera.Info.IsPlay = false;
+                    gridCamera.Children.Add(cameraInitImage);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("播放失败，资源被占用");
+                gridCamera.Children.Add(cameraInitImage);
+            }
+        }
+
+        public void PlayCameraFromUdp(ChannelInfo info)
+        {
+            Image cameraInitImage = new Image();
+            cameraInitImage.Source = new BitmapImage(new Uri("../Images/camera.jpg", UriKind.Relative));
+            try
+            {
+                if (info.CameraType == 0)
+                {
+                    UIControl_HBGK1 cam = new UIControl_HBGK1(info);
+                    cam.StopCamera();
+                    if (cam.InitCamera(info))
+                    {
+                        gridCamera.Children.Clear();
+                        gridCamera.Children.Add(cam);
+                    }
+                    cam.SetSize(this.ActualHeight, this.ActualWidth);
+                }
+                else if (info.CameraType == 1)
+                {
+                    YiTongCameraControl cam = new YiTongCameraControl(info);
+                    cam.StopCamera();
+                    if (cam.InitCamera(info))
+                    {
+                        gridCamera.Children.Clear();
+                        gridCamera.Children.Add(cam);
+                    }
+                    cam.SetSize(this.ActualHeight, this.ActualWidth);
+                }
+                else
+                {
+                    info.IsPlay = false;
                     gridCamera.Children.Add(cameraInitImage);
                 }
             }

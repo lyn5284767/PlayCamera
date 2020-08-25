@@ -75,6 +75,9 @@
     <Reference Include="Microsoft.Windows.Shell, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HandyControl.2.5.0.2\lib\net40\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -120,12 +123,14 @@
       <DependentUpon>AddOrModifyGroup.xaml</DependentUpon>
     </Compile>
     <Compile Include="CameraWithPlayPanel.cs" />
+    <Compile Include="Connect.cs" />
     <Compile Include="FourPanel.xaml.cs">
       <DependentUpon>FourPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="FullPlayCamera.xaml.cs">
       <DependentUpon>FullPlayCamera.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JsonHelper.cs" />
     <Compile Include="NinePanel.xaml.cs">
       <DependentUpon>NinePanel.xaml</DependentUpon>
     </Compile>

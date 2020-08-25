@@ -29,10 +29,13 @@ namespace PlayCamera
     {
         System.Timers.Timer cameraSaveThreadTimer = new System.Timers.Timer();
         BrushConverter bc = new BrushConverter();
+        IConnect con = new UDPConnect("127.0.0.1", 8050, "192.168.137.1", 8080);
+        bool connect = false;
         //ViewModel viewModel = new ViewModel();
         public MainWindow()
         {
             InitializeComponent();
+            this.gdAll.Children.Add(FullPlayCamera.Instance);
             //this.DataContext = viewModel;
             GlobalInfo.Instance.nowPanel = NowPanel.Four;
             //InitCameraGroup();
@@ -40,14 +43,72 @@ namespace PlayCamera
             ////CameraBindGrid();
             //InitPlayList();
             //InitCameraTree();
+            con.GetPlayCameraEvent += Con_GetPlayCameraEvent;
+            connect = Connect();
             this.Loaded += MainWindow_Loaded;
         }
 
+        private void Con_GetPlayCameraEvent(string camIP)
+        {
+            try
+            {
+                Action<String> playFullScreenAct = new Action<string>(PlayFullScreen);
+                this.Dispatcher.BeginInvoke(playFullScreenAct, camIP);
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
+
+        private void PlayFullScreen(string camIP)
+        {
+            this.gdMain.Visibility = Visibility.Collapsed;
+
+            if (this.gdAll.Children.Contains(FullPlayCamera.Instance))
+            {
+                this.gdAll.Children.Remove(FullPlayCamera.Instance);
+                this.gdAll.Children.Add(FullPlayCamera.Instance);
+            }
+            else
+            {
+                this.gdAll.Children.Add(FullPlayCamera.Instance);
+            }
+            FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
+            FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
+            ICameraFactory cam = GlobalInfo.Instance.CameraList.Where(w => w.Info.RemoteIP == camIP).FirstOrDefault();
+            if (cam != null)
+            {
+                FullPlayCamera.Instance.PlayCameraFromUdp(cam.Info);
+            }
+        }
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             InitCameraTree();
             InitCameraSaveTimeThread();
             InitPlayPanel();
+            this.gdAll.Children.Remove(FullPlayCamera.Instance);
+
+        }
+        object _async = new object();
+        public bool Connect()
+        {
+            lock (_async)
+            {
+                if (con.IsClosed)
+                {
+                    if (con.OpenConnect())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+            }
+            return false;
         }
 
         private void InitCameraTree()
@@ -439,6 +500,7 @@ namespace PlayCamera
         /// <param name="camId"></param>
         private void Instance_FullScreenEvent(int camId)
         {
+            FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
             FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
             this.gdMain.Visibility = Visibility.Collapsed;
             if (!this.gdAll.Children.Contains(FullPlayCamera.Instance))
@@ -451,6 +513,7 @@ namespace PlayCamera
                 this.gdAll.Children.Add(FullPlayCamera.Instance);
             }
             FullPlayCamera.Instance.CamId = camId;
+            FullPlayCamera.Instance.PlayCamera(camId);
         }
 
         /// <summary>
@@ -480,9 +543,18 @@ namespace PlayCamera
         /// </summary>
         private void FullImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
             FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
             this.gdMain.Visibility = Visibility.Collapsed;
-            this.gdAll.Children.Add(FullPlayCamera.Instance);
+            if (!this.gdAll.Children.Contains(FullPlayCamera.Instance))
+            {
+                this.gdAll.Children.Add(FullPlayCamera.Instance);
+            }
+            else
+            {
+                this.gdAll.Children.Remove(FullPlayCamera.Instance);
+                this.gdAll.Children.Add(FullPlayCamera.Instance);
+            }
             Grid dg = GlobalInfo.Instance.SelectGrid;
             if (dg != null && dg.Tag is ICameraFactory)
             {
@@ -782,11 +854,17 @@ namespace PlayCamera
                 System.Windows.MessageBox.Show("未选中组");
                 return;
             }
-            string sql = string.Format("Delete From CameraGroup Where Id= '{0}'", GlobalInfo.Instance.SelectNode.NodeId);
-            SQLiteFac.Instance.ExecuteNonQuery(sql);
-            GlobalInfo.Instance.CamList[0].Nodes.Remove(GlobalInfo.Instance.SelectNode);
-            this.tvCamera.ItemsSource = null;
-            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            MessageBoxResult result = System.Windows.MessageBox.Show("确认删除分组及组下包含的摄像头？", "提示", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                string sql = string.Format("Delete From CameraGroup Where Id= '{0}'", GlobalInfo.Instance.SelectNode.NodeId);
+                SQLiteFac.Instance.ExecuteNonQuery(sql);
+                sql = string.Format("Delete From CameraInfo Where CamGroup= '{0}'", GlobalInfo.Instance.SelectNode.NodeId);
+                SQLiteFac.Instance.ExecuteNonQuery(sql);
+                GlobalInfo.Instance.CamList[0].Nodes.Remove(GlobalInfo.Instance.SelectNode);
+                this.tvCamera.ItemsSource = null;
+                this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
+            }
             //foreach (var child in spCameraList.Children)
             //{
             //    if ((child is Expander) && (child as Expander).Tag != null && (child as Expander).Tag == GlobalInfo.Instance.SelectGroup)
@@ -810,7 +888,7 @@ namespace PlayCamera
                 return;
             }
 
-            AddOrModifyCamera addOrModifyCamera = new AddOrModifyCamera();
+            AddOrModifyCamera addOrModifyCamera = new AddOrModifyCamera("添加摄像头");
             addOrModifyCamera.InitWin("添加摄像头", node.Tag as CameraGroup, null);
             addOrModifyCamera.AddCameraEvent += Main_AddCameraEvent;
             addOrModifyCamera.ShowDialog();
@@ -910,7 +988,7 @@ namespace PlayCamera
                 return;
             }
             Node node = GetRootNode(GlobalInfo.Instance.SelectNode);
-            AddOrModifyCamera addOrModifyCamera = new AddOrModifyCamera();
+            AddOrModifyCamera addOrModifyCamera = new AddOrModifyCamera("修改摄像头");
             addOrModifyCamera.InitWin("修改摄像头", node.Tag as CameraGroup, GlobalInfo.Instance.SelectNode.Tag as CameraInfo);
             addOrModifyCamera.ModifyCameraEvent += Main_ModifyCameraEvent;
             addOrModifyCamera.ShowDialog();
@@ -927,7 +1005,22 @@ namespace PlayCamera
             SQLiteFac.Instance.ExecuteNonQuery(sql);
             GlobalInfo.Instance.SelectNode.Tag = info;
             GlobalInfo.Instance.SelectNode.NodeName = info.CAMERANAME;
-            GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault().Info = CameraInfoToChannelInfo(info);
+            //GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault().Info = CameraInfoToChannelInfo(info);
+            ChannelInfo chInfo = CameraInfoToChannelInfo(info);
+            GlobalInfo.Instance.CameraList.RemoveAll(w => w.Info.ID == info.Id);
+            switch (chInfo.CameraType)
+            {
+                case 0:
+                    {
+                        GlobalInfo.Instance.CameraList.Add(new UIControl_HBGK1(chInfo));
+                        break;
+                    }
+                case 1:
+                    {
+                        GlobalInfo.Instance.CameraList.Add(new YiTongCameraControl(chInfo));
+                        break;
+                    }
+            }
             this.tvCamera.ItemsSource = null;
             this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //GlobalInfo.Instance.cameraWithPlayPanelList.RemoveAll(w=>w.camera.Info.ID == info.camera.Info.ID);
@@ -950,19 +1043,24 @@ namespace PlayCamera
                 System.Windows.MessageBox.Show("未选中摄像头");
                 return;
             }
-            string sql = string.Format("Delete From CameraInfo Where Id= '{0}'", (GlobalInfo.Instance.SelectNode.Tag as CameraInfo).Id);
-            SQLiteFac.Instance.ExecuteNonQuery(sql);
-            GlobalInfo.Instance.CameraList.RemoveAll(w => w.Info.ID == (GlobalInfo.Instance.SelectNode.Tag as CameraInfo).Id);
-            Node node = GetRootNode(GlobalInfo.Instance.SelectNode);
-            foreach (Node tmp in GlobalInfo.Instance.CamList)
+            MessageBoxResult result = System.Windows.MessageBox.Show("确认删除摄像头？","提示", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
             {
-                if (tmp == node)
-                {
-                    tmp.Nodes.Remove(GlobalInfo.Instance.SelectNode);
-                }
+                string sql = string.Format("Delete From CameraInfo Where Id= '{0}'", (GlobalInfo.Instance.SelectNode.Tag as CameraInfo).Id);
+                SQLiteFac.Instance.ExecuteNonQuery(sql);
+                GlobalInfo.Instance.CameraList.RemoveAll(w => w.Info.ID == (GlobalInfo.Instance.SelectNode.Tag as CameraInfo).Id);
+                DeleteSelectCamera(GlobalInfo.Instance.SelectNode,GlobalInfo.Instance.CamList);
+                //Node node = GetRootNode(GlobalInfo.Instance.SelectNode);
+                //foreach (Node tmp in node.Nodes)
+                //{
+                //    if (tmp == GlobalInfo.Instance.SelectNode)
+                //    {
+                //        tmp.Nodes.Remove(GlobalInfo.Instance.SelectNode);
+                //    }
+                //}
+                this.tvCamera.ItemsSource = null;
+                this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             }
-            this.tvCamera.ItemsSource = null;
-            this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
             //foreach (System.Windows.Controls.ListBox item in GlobalInfo.Instance.listBoxeList)
             //{
             //    //ListBoxItem lbItem =  GlobalInfo.Instance.ListBoxItemList.Where(w => (w.Tag as CameraWithPlayPanel).camera.Info.ID == GlobalInfo.Instance.SelectCamera.camera.Info.ID).FirstOrDefault();
@@ -971,6 +1069,22 @@ namespace PlayCamera
             //        item.Items.Remove(GlobalInfo.Instance.ListBoxItemList.Where(w => (w.Tag as CameraWithPlayPanel).camera.Info.ID == GlobalInfo.Instance.SelectCamera.camera.Info.ID).FirstOrDefault());
             //    }
             //}
+        }
+
+        private void DeleteSelectCamera(Node selectNode,List<Node> NodeList)
+        {
+            foreach (Node tmp in NodeList)
+            {
+                if (tmp == selectNode)
+                {
+                    NodeList.Remove(tmp);
+                    return;
+                }
+                if (tmp.Nodes.Count>0)
+                {
+                    DeleteSelectCamera(selectNode, tmp.Nodes);
+                }
+            }
         }
 
         private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e)

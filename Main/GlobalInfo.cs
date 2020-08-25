@@ -52,6 +52,30 @@ namespace PlayCamera
         public List<Node> CamList = new List<Node>(); // 树节点列表
         public Node SelectGroupNode { get; set; } // 选择类型未组的树节点
         public Grid SelectGrid { get; set; } // 选择的播放面
+
+        public GloConfig GloConfig { get; set; }
+    }
+    /// <summary>
+    /// 全局配置
+    /// </summary>
+    public class GloConfig
+    {
+        /// <summary>
+        /// 本地IP
+        /// </summary>
+        public string LocalIP { get; set; }
+        /// <summary>
+        /// 本地端口
+        /// </summary>
+        public int LocalPort { get; set; }
+        /// <summary>
+        /// 远端IP
+        /// </summary>
+        public string RemoteIP { get; set; }
+        /// <summary>
+        /// 远端端口
+        /// </summary>
+        public int RemotePort { get; set; }
     }
     /// <summary>
     /// 摄像头分屏枚举

@@ -26,6 +26,7 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2">
             <TextBlock Width="50" FontSize="20" Text="IP:" Margin="10,0,0,0"></TextBlock>
@@ -44,17 +45,21 @@
             <TextBox Height="30" Width="150" Name="tbCameraPwd" FontSize="14"></TextBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="2">
+            <TextBlock Width="50" FontSize="20" Text="通道:" Margin="10,0,0,0"></TextBlock>
+            <TextBox Height="30" Width="150" Name="tbPlayPort" FontSize="14"></TextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.ColumnSpan="2">
             <TextBlock Width="50" FontSize="20" Text="类型:" Margin="10,0,0,0"></TextBlock>
             <ComboBox Height="30" Width="150"  Name="cbCameraType" SelectedIndex="0" SelectionChanged="cbCameraType_SelectionChanged">
                 <ComboBoxItem>宏英</ComboBoxItem>
                 <ComboBoxItem>一通</ComboBoxItem>
             </ComboBox>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.ColumnSpan="2">
+        <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.ColumnSpan="2">
             <TextBlock Width="50" FontSize="20" Text="名称:" Margin="10,0,0,0"></TextBlock>
             <TextBox Height="30" Width="150" Name="tbCameraName" FontSize="14"></TextBox>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="6" HorizontalAlignment="Right" Grid.Column="1">
+        <StackPanel Orientation="Horizontal" Grid.Row="7" HorizontalAlignment="Right" Grid.Column="1">
             <Button Height="40" Width="100" Click="btnSave_Click">保存</Button>
             <Button Height="40" Width="100" Margin="10,0,0,0" Click="btnCancel_Click">取消</Button>
         </StackPanel>

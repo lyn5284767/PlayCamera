@@ -29,7 +29,6 @@ namespace PlayCamera
     {
         System.Timers.Timer cameraSaveThreadTimer = new System.Timers.Timer();
         BrushConverter bc = new BrushConverter();
-        IConnect con = new UDPConnect("127.0.0.1", 8050, "192.168.137.1", 8080);
         bool connect = false;
         //ViewModel viewModel = new ViewModel();
         public MainWindow()
@@ -43,8 +42,12 @@ namespace PlayCamera
             ////CameraBindGrid();
             //InitPlayList();
             //InitCameraTree();
+            string sql = "Select * from GloConfig";
+            GlobalInfo.Instance.GloConfig = SQLiteFac.Instance.ExecuteList<GloConfig>(sql).FirstOrDefault();
+            IConnect con = new UDPConnect(GlobalInfo.Instance.GloConfig.LocalIP, GlobalInfo.Instance.GloConfig.LocalPort, GlobalInfo.Instance.GloConfig.RemoteIP, GlobalInfo.Instance.GloConfig.RemotePort);
             con.GetPlayCameraEvent += Con_GetPlayCameraEvent;
-            connect = Connect();
+            con.OpenConnect();
+            //connect = Connect();
             this.Loaded += MainWindow_Loaded;
         }
 
@@ -79,7 +82,11 @@ namespace PlayCamera
             ICameraFactory cam = GlobalInfo.Instance.CameraList.Where(w => w.Info.RemoteIP == camIP).FirstOrDefault();
             if (cam != null)
             {
-                FullPlayCamera.Instance.PlayCameraFromUdp(cam.Info);
+                FullPlayCamera.Instance.PlayCameraFromUdp(cam);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("未配置" + camIP + "摄像头");
             }
         }
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -90,26 +97,26 @@ namespace PlayCamera
             this.gdAll.Children.Remove(FullPlayCamera.Instance);
 
         }
-        object _async = new object();
-        public bool Connect()
-        {
-            lock (_async)
-            {
-                if (con.IsClosed)
-                {
-                    if (con.OpenConnect())
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+        //object _async = new object();
+        //public bool Connect()
+        //{
+        //    lock (_async)
+        //    {
+        //        if (con.IsClosed)
+        //        {
+        //            if (con.OpenConnect())
+        //            {
+        //                return true;
+        //            }
+        //            else
+        //            {
+        //                return false;
+        //            }
 
-                }
-            }
-            return false;
-        }
+        //        }
+        //    }
+        //    return false;
+        //}
 
         private void InitCameraTree()
         {
@@ -308,8 +315,12 @@ namespace PlayCamera
         /// </summary>
         private void InitPlayPanel()
         {
+            
             this.MainPanel.Children.Clear();
             this.MainPanel.Children.Add(FourPanel.Instance);
+            FourPanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
+            FourPanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
+            FourPanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
             FourPanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
             FourPanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
             FourPanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
@@ -319,7 +330,9 @@ namespace PlayCamera
             GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera2);
             GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera3);
             GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera4);
-
+            NinePanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
+            NinePanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
+            NinePanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
             NinePanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
             NinePanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
             NinePanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
@@ -611,6 +624,17 @@ namespace PlayCamera
                     }
                 }
             }
+            else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
+            {
+                foreach (Grid gd in GlobalInfo.Instance.nineGdList)
+                {
+                    if (gd.Tag is ICameraFactory)
+                    {
+                        bool play = (gd.Tag as ICameraFactory).Info.IsPlay;
+                        if (play) playIdList.Add((gd.Tag as ICameraFactory).Info.ID);
+                    }
+                }
+            }
 
             FindPlayNode(GlobalInfo.Instance.CamList, playIdList);
             this.tvCamera.ItemsSource = null;
@@ -781,6 +805,16 @@ namespace PlayCamera
             {
                 firstCol.Width = new GridLength(1, GridUnitType.Star);
             }
+            if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
+            {
+                this.MainPanel.Children.Clear();
+                this.MainPanel.Children.Add(FourPanel.Instance);
+            }
+            else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
+            {
+                this.MainPanel.Children.Clear();
+                this.MainPanel.Children.Add(NinePanel.Instance);
+            }
         }
         /// <summary>
         /// 添加分组
@@ -913,8 +947,8 @@ namespace PlayCamera
         private void Main_AddCameraEvent(CameraInfo info)
         {
             string sql = string.Format("Insert Into CameraInfo (CHLID,REMOTECHANNLE,REMOTEIP,REMOTEPORT,REMOTEUSER,REMOTEPWD,NPLAYPORT,PTZPORT,CAMERATYPE,CameraName,CamGroup) " +
-                "Values ('1', '1', '{0}', '{1}', '{2}', '{3}', '1', '8091', '{4}', '{5}', '{6}')",
-                info.REMOTEIP,info.REMOTEPORT,info.REMOTEUSER,info.REMOTEPWD,info.CAMERATYPE,info.CAMERANAME,info.CamGroup);
+                "Values ('1', '1', '{0}', '{1}', '{2}', '{3}', '{4}', '8091', '{5}', '{6}', '{7}')",
+                info.REMOTEIP,info.REMOTEPORT,info.REMOTEUSER,info.REMOTEPWD,info.NPLAYPORT,info.CAMERATYPE,info.CAMERANAME,info.CamGroup);
             int id = SQLiteFac.Instance.InsertWithBack(sql);
             info.Id = id;
             Node camnode = new Node();
@@ -1000,8 +1034,8 @@ namespace PlayCamera
         /// <param name="group"></param>
         private void Main_ModifyCameraEvent(CameraInfo info)
         {
-            string sql = string.Format("update CameraInfo Set REMOTEIP = '{0}',REMOTEPORT='{1}',REMOTEUSER='{2}',REMOTEPWD='{3}',CAMERATYPE='{4}',CameraName='{5}',CamGroup='{6}' Where Id={7} ",
-                info.REMOTEIP, info.REMOTEPORT, info.REMOTEUSER, info.REMOTEPWD, info.CAMERATYPE, info.CAMERANAME, info.CamGroup, info.Id);
+            string sql = string.Format("update CameraInfo Set REMOTEIP = '{0}',REMOTEPORT='{1}',REMOTEUSER='{2}',REMOTEPWD='{3}',NPLAYPORT='{4}',CAMERATYPE='{5}',CameraName='{6}',CamGroup='{7}' Where Id={8} ",
+                info.REMOTEIP, info.REMOTEPORT, info.REMOTEUSER, info.REMOTEPWD,info.NPLAYPORT, info.CAMERATYPE, info.CAMERANAME, info.CamGroup, info.Id);
             SQLiteFac.Instance.ExecuteNonQuery(sql);
             GlobalInfo.Instance.SelectNode.Tag = info;
             GlobalInfo.Instance.SelectNode.NodeName = info.CAMERANAME;
@@ -1100,6 +1134,18 @@ namespace PlayCamera
                         if (camera != null)
                         {
                             FourPanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                        }
+                    }
+                }
+                else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
+                {
+                    if (GlobalInfo.Instance.SelectGrid != null && GlobalInfo.Instance.SelectNode != null)
+                    {
+                        CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                        ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                        if (camera != null)
+                        {
+                            NinePanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
                         }
                     }
                 }

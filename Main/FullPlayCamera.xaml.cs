@@ -66,34 +66,57 @@ namespace PlayCamera
             cameraInitImage.Source = new BitmapImage(new Uri("../Images/camera.jpg", UriKind.Relative));
             try
             {
+                GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
                 ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == camId).FirstOrDefault();
-                if (camera is UIControl_HBGK1)
+                camera.StopCamera();
+                bool isPlay = camera.InitCamera(camera.Info);
+                if (isPlay)
                 {
-                    UIControl_HBGK1 cam = new UIControl_HBGK1(camera.Info);
-                    cam.StopCamera();
-                    if (cam.InitCamera(camera.Info))
+                    gridCamera.Children.Clear();
+                    if (camera is UIControl_HBGK1)
                     {
-                        gridCamera.Children.Clear();
-                        gridCamera.Children.Add(cam);
+                        gridCamera.Children.Add(camera as UIControl_HBGK1);
                     }
-                    cam.SetSize(this.ActualHeight, this.ActualWidth);
-                }
-                else if (camera is YiTongCameraControl)
-                {
-                    YiTongCameraControl cam = new YiTongCameraControl(camera.Info);
-                    cam.StopCamera();
-                    if (cam.InitCamera(camera.Info))
+                    else if (camera is YiTongCameraControl)
                     {
-                        gridCamera.Children.Clear();
-                        gridCamera.Children.Add(cam);
+                        gridCamera.Children.Add(camera as YiTongCameraControl);
                     }
-                    cam.SetSize(this.ActualHeight, this.ActualWidth);
+                    camera.SetSize(this.ActualHeight, this.ActualWidth);
                 }
                 else
                 {
-                    camera.Info.IsPlay = false;
+                   
                     gridCamera.Children.Add(cameraInitImage);
                 }
+                //    if (camera is UIControl_HBGK1)
+                //{
+                //    UIControl_HBGK1 cam = new UIControl_HBGK1(camera.Info);
+                //    cam.StopCamera();
+
+                //    if (isPlay)
+                //    {
+                //        gridCamera.Children.Clear();
+                //        gridCamera.Children.Add(cam);
+                //    }
+                //    cam.SetSize(this.ActualHeight, this.ActualWidth);
+                //}
+                //else if (camera is YiTongCameraControl)
+                //{
+                //    YiTongCameraControl cam = new YiTongCameraControl(camera.Info);
+                //    cam.StopCamera();
+                //    if (cam.InitCamera(camera.Info))
+                //    {
+                //        gridCamera.Children.Clear();
+                //        gridCamera.Children.Add(cam);
+                //    }
+                //    cam.SetSize(this.ActualHeight, this.ActualWidth);
+                //}
+                //else
+                //{
+                //    camera.Info.IsPlay = false;
+                //    gridCamera.Children.Add(cameraInitImage);
+                //}
             }
             catch (Exception ex)
             {
@@ -102,39 +125,62 @@ namespace PlayCamera
             }
         }
 
-        public void PlayCameraFromUdp(ChannelInfo info)
+        public void PlayCameraFromUdp(ICameraFactory camera)
         {
             Image cameraInitImage = new Image();
             cameraInitImage.Source = new BitmapImage(new Uri("../Images/camera.jpg", UriKind.Relative));
             try
             {
-                if (info.CameraType == 0)
+                GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
+                camera.StopCamera();
+                bool isPlay = camera.InitCamera(camera.Info);
+                if (isPlay)
                 {
-                    UIControl_HBGK1 cam = new UIControl_HBGK1(info);
-                    cam.StopCamera();
-                    if (cam.InitCamera(info))
+                    gridCamera.Children.Clear();
+                    if (camera is UIControl_HBGK1)
                     {
-                        gridCamera.Children.Clear();
-                        gridCamera.Children.Add(cam);
+                        gridCamera.Children.Add(camera as UIControl_HBGK1);
                     }
-                    cam.SetSize(this.ActualHeight, this.ActualWidth);
-                }
-                else if (info.CameraType == 1)
-                {
-                    YiTongCameraControl cam = new YiTongCameraControl(info);
-                    cam.StopCamera();
-                    if (cam.InitCamera(info))
+                    else if (camera is YiTongCameraControl)
                     {
-                        gridCamera.Children.Clear();
-                        gridCamera.Children.Add(cam);
+                        gridCamera.Children.Add(camera as YiTongCameraControl);
                     }
-                    cam.SetSize(this.ActualHeight, this.ActualWidth);
+                    camera.SetSize(this.ActualHeight, this.ActualWidth);
                 }
                 else
                 {
-                    info.IsPlay = false;
+
                     gridCamera.Children.Add(cameraInitImage);
                 }
+                //    if (camera is UIControl_HBGK1)
+                //{
+                //    UIControl_HBGK1 cam = new UIControl_HBGK1(camera.Info);
+                //    cam.StopCamera();
+
+                //    if (isPlay)
+                //    {
+                //        gridCamera.Children.Clear();
+                //        gridCamera.Children.Add(cam);
+                //    }
+                //    cam.SetSize(this.ActualHeight, this.ActualWidth);
+                //}
+                //else if (camera is YiTongCameraControl)
+                //{
+                //    YiTongCameraControl cam = new YiTongCameraControl(camera.Info);
+                //    cam.StopCamera();
+                //    if (cam.InitCamera(camera.Info))
+                //    {
+                //        gridCamera.Children.Clear();
+                //        gridCamera.Children.Add(cam);
+                //    }
+                //    cam.SetSize(this.ActualHeight, this.ActualWidth);
+                //}
+                //else
+                //{
+                //    camera.Info.IsPlay = false;
+                //    gridCamera.Children.Add(cameraInitImage);
+                //}
             }
             catch (Exception ex)
             {
@@ -147,6 +193,7 @@ namespace PlayCamera
         {
             if (CanelFullScreenEvent != null)
             {
+                gridCamera.Children.Clear();
                 CanelFullScreenEvent();
             }
         }

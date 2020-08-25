@@ -89,6 +89,7 @@ namespace Main
                 this.tbCameraPwd.Text = info.REMOTEPWD;
                 this.cbCameraType.SelectedIndex = info.CAMERATYPE;
                 this.tbCameraName.Text = info.CAMERANAME;
+                this.tbPlayPort.Text = info.NPLAYPORT.ToString();
                 this.CameraInfo = info;
             }
         }
@@ -115,6 +116,7 @@ namespace Main
                 info.REMOTEPWD = this.tbCameraPwd.Text;
                 info.CAMERATYPE= this.cbCameraType.SelectedIndex;
                 info.CAMERANAME = this.tbCameraName.Text;
+                info.NPLAYPORT = int.Parse(this.tbPlayPort.Text);
                 info.CamGroup = this.GroupID;
                 if (AddCameraEvent != null)
                 {
@@ -130,6 +132,7 @@ namespace Main
                 this.CameraInfo.CAMERATYPE = this.cbCameraType.SelectedIndex;
                 this.CameraInfo.CAMERANAME = this.tbCameraName.Text;
                 this.CameraInfo.CamGroup = this.GroupID;
+                this.CameraInfo.NPLAYPORT = int.Parse(this.tbPlayPort.Text);
                 if (ModifyCameraEvent != null)
                 {
                     ModifyCameraEvent(this.CameraInfo);
@@ -157,12 +160,14 @@ namespace Main
                     this.tbCameraPort.Text = "554";
                     this.tbCameraUser.Text = "admin";
                     this.tbCameraPwd.Text = "123456";
+                    this.tbPlayPort.Text = "1";
                 }
                 else if (cb.SelectedIndex == 1)
                 {
                     this.tbCameraPort.Text = "34567";
                     this.tbCameraUser.Text = "admin";
                     this.tbCameraPwd.Text = "";
+                    this.tbPlayPort.Text = "1";
                 }
             }
         }

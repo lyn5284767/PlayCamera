@@ -25,7 +25,7 @@ namespace PlayCamera
     /// <summary>
     /// FourPanel.xaml 的交互逻辑
     /// </summary>
-    public partial class FourPanel : System.Windows.Controls.UserControl
+    public partial class FourPanel : System.Windows.Controls.UserControl,IDisposable
     {
         private static FourPanel _instance = null;
         private static readonly object syncRoot = new object();
@@ -102,6 +102,12 @@ namespace PlayCamera
         public void PlaySelectCamera(Grid gridCamera, ICameraFactory camera)
         {
             gridCamera.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { gridCamera, camera });
+        }
+
+        public void ReSizeCamera()
+        {
+            double height = this.bdOne.ActualHeight;
+            double width = this.bdOne.ActualWidth;
         }
         /// <summary>
         /// 摄像头播放
@@ -445,6 +451,11 @@ namespace PlayCamera
                     }
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }

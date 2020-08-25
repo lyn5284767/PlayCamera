@@ -17,65 +17,65 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Name="bdOne" Grid.Row="0" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" Tag="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border Name="bdOne" Grid.Row="0" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral1" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera1" Tag="1">
+                <Grid x:Name="ninegridCamera1">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="0" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" Tag="2" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="0" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral2" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera2" Tag="2">
+                <Grid x:Name="ninegridCamera2">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="0" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" Tag="3" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="0" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral3" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera3" Tag="3">
+                <Grid x:Name="ninegridCamera3">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="1" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" Tag="4" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="1" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral4" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera4" Tag="4">
+                <Grid x:Name="ninegridCamera4">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="1" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" Tag="5" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="1" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral5" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera5" Tag="5">
+                <Grid x:Name="ninegridCamera5">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="1" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" Tag="6" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="1" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral6" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera6" Tag="6">
+                <Grid x:Name="ninegridCamera6">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="2" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" Tag="7" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="2" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral7" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera7" Tag="7">
+                <Grid x:Name="ninegridCamera7">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="2" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" Tag="8" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="2" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral8" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera8" Tag="8">
+                <Grid x:Name="ninegridCamera8">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="2" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" Tag="9" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="2" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral9" Stretch="Uniform">
-                <Grid x:Name="ninegridCamera9" Tag="9">
+                <Grid x:Name="ninegridCamera9">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>

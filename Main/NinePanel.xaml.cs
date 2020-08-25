@@ -67,17 +67,21 @@ namespace PlayCamera
         /// </summary>
         public void PlayCamera()
         {
-            int groupID = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault().NodeId;
-            List<ICameraFactory> camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
-            for (int i = 0; i < GlobalInfo.Instance.nineGdList.Count; i++)
+            Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
+            if (node != null)
             {
-                if (camList.Count > i)
+                int groupID = node.NodeId;
+                List<ICameraFactory> camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
+                for (int i = 0; i < GlobalInfo.Instance.nineGdList.Count; i++)
                 {
-                    GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], camList[i] });
-                }
-                else
-                {
-                    GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], null });
+                    if (camList.Count > i)
+                    {
+                        GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], camList[i] });
+                    }
+                    else
+                    {
+                        GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], null });
+                    }
                 }
             }
             //this.ninegridCamera1.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera1, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 1).FirstOrDefault() });
@@ -97,16 +101,30 @@ namespace PlayCamera
         }
         private void PlayAction(Grid gridCamera, ICameraFactory camera)
         {
+            Image cameraInitImage = new Image();
+            cameraInitImage.Source = new BitmapImage(new Uri("../Images/camera.jpg", UriKind.Relative));
             try
             {
-                Image cameraInitImage = new Image();
-                cameraInitImage.Source = new BitmapImage(new Uri("../Images/camera.jpg", UriKind.Relative));
                 if (gridCamera != null && camera != null)
                 {
                     GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
+                    //if (camera is UIControl_HBGK1)
+                    //{
+                    //    UIControl_HBGK1 cam = new UIControl_HBGK1(camera.Info);
+                    //    cam.StopCamera();
+                    //    if (cam.InitCamera(camera.Info))
+                    //    {
+                    //        camera.Info.IsPlay = true;
+                    //        gridCamera.Children.Clear();
+                    //        gridCamera.Children.Add(cam);
+                    //    }
+                    //}
+                    //else if (camera is YiTongCameraControl)
+                    //{
+                    //    gridCamera.Children.Add(camera as YiTongCameraControl);
+                    //}
                     camera.StopCamera();
-                    ChannelInfo info = camera.Info;
-                    bool isPlay = camera.InitCamera(info);
+                    bool isPlay = camera.InitCamera(camera.Info);
                     if (isPlay)
                     {
                         camera.Info.IsPlay = true;
@@ -119,15 +137,20 @@ namespace PlayCamera
                         {
                             gridCamera.Children.Add(camera as YiTongCameraControl);
                         }
-                        else
-                        {
-                            gridCamera.Children.Add(cameraInitImage);
-                        }
                         camera.SetSize(this.bdOne.ActualHeight, this.bdOne.ActualWidth);
                         camera.FullScreenEvent -= Camera_FullScreenEvent;
                         camera.SelectCameraEvent -= Camera_SelectCameraEvent;
                         camera.FullScreenEvent += Camera_FullScreenEvent;
                         camera.SelectCameraEvent += Camera_SelectCameraEvent;
+                        gridCamera.Tag = camera;
+                        if (gridCamera.Parent != null && gridCamera.Parent is Viewbox)
+                        {
+                            Viewbox vb = gridCamera.Parent as Viewbox;
+                            if (vb.Parent != null && vb.Parent is Border)
+                            {
+                                (vb.Parent as Border).Tag = camera;
+                            }
+                        }
                     }
                     else
                     {
@@ -146,7 +169,8 @@ namespace PlayCamera
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.StackTrace);
+                System.Windows.MessageBox.Show("摄像头已经在其他窗口播放");
+                gridCamera.Children.Add(cameraInitImage);
             }
         }
 
@@ -155,9 +179,10 @@ namespace PlayCamera
             var bc = new BrushConverter();
             foreach (Border bd in FindVisualChildren<Border>(this.gdMain))
             {
-                if (bd.Tag != null && bd.Tag.ToString() == cameraID.ToString())
+                if (bd.Tag != null && (bd.Tag as ICameraFactory).Info.ID == cameraID)
                 {
                     bd.BorderBrush = (Brush)bc.ConvertFrom("#002DFF");
+                    GlobalInfo.Instance.SelectGrid = GetGridInBorder(bd);
                 }
                 else
                 {
@@ -167,14 +192,6 @@ namespace PlayCamera
             if (SelectCameraEvent != null)
             {
                 SelectCameraEvent(cameraID);
-            }
-        }
-
-        private void Camera_FullScreenEvent(int cameraID)
-        {
-            if (FullScreenEvent != null)
-            {
-                FullScreenEvent(cameraID);
             }
         }
 
@@ -208,6 +225,31 @@ namespace PlayCamera
             catch (Exception ex)
             {
                 MessageBox.Show(ex.StackTrace);
+            }
+        }
+
+        
+        /// <summary>
+        /// 获取Border中的Grid
+        /// </summary>
+        private Grid GetGridInBorder(Border border)
+        {
+            if (border.Child != null && border.Child is Viewbox)
+            {
+                Viewbox vb = border.Child as Viewbox;
+                if (vb.Child != null && vb.Child is Grid)
+                {
+                    return vb.Child as Grid;
+                }
+            }
+            return null;
+        }
+
+        private void Camera_FullScreenEvent(int cameraID)
+        {
+            if (FullScreenEvent != null)
+            {
+                FullScreenEvent(cameraID);
             }
         }
 
@@ -254,14 +296,18 @@ namespace PlayCamera
                     bd.BorderBrush = (Brush)bc.ConvertFrom("#686868");
                 }
                 border.BorderBrush = (Brush)bc.ConvertFrom("#002DFF");
-                if (SelectCameraEvent != null)
+                if (SelectCameraEvent != null && border.Tag!=null)
                 {
                     SelectCameraEvent(int.Parse(border.Tag.ToString()));
                 }
             }
             else if (e.ClickCount == 2)
             {
-                if (FullScreenEvent != null)
+                if (border.Tag == null)
+                {
+                    System.Windows.MessageBox.Show("未检测到播放摄像头");
+                }
+                else
                 {
                     FullScreenEvent(int.Parse(border.Tag.ToString()));
                 }

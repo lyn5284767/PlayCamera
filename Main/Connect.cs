@@ -286,51 +286,70 @@ namespace PlayCamera
         /// </summary>
         public void RcvData()
         {
-            if (udpRecive == null) return;
+            try
+            {
+                if (udpRecive == null) return;
 
-            int length = 0;
-            // 临时存储远端数据
-            byte[] rcvBufferTemp = new byte[udpRecive.ReceiveBufferSize];
+                int length = 0;
+                // 临时存储远端数据
+                byte[] rcvBufferTemp = new byte[udpRecive.ReceiveBufferSize];
 
-            while (true)
-            {  
-                length = udpRecive.ReceiveFrom(rcvBufferTemp, ref fromPoint);
-
-                if (length > 0)
+                while (true)
                 {
-                    string recStr = System.Text.Encoding.Default.GetString(rcvBufferTemp).Substring(0, length);
-                    UdpModel model = recStr.ToModel<UdpModel>();
-                    if (model.UdpType == UdpType.PlayCamera) // 播放摄像头 
-                    {
-                        if (GetPlayCameraEvent != null)
-                        {
-                            GetPlayCameraEvent(model.Content);
-                        }
-                    }
-                    _rcvTime = DateTime.Now;
-                    RcvByteCnt = length;
-                    RcvByteSumCnt += length;
+                    length = udpRecive.ReceiveFrom(rcvBufferTemp, ref fromPoint);
 
-                    if (bUseAsPro)
+                    if (length > 0)
                     {
-                        //加入对收到的字节序列  头、校验和、帧尾的判读，并计数 正确的帧数 和校验和失败的 帧数
-                        if (true)
+                        string recStr = System.Text.Encoding.Default.GetString(rcvBufferTemp).Substring(0, length);
+                        //UdpModel model = recStr.ToModel<UdpModel>();
+                        //if (model != null && model.UdpType == UdpType.PlayCamera) // 播放摄像头 
+                        //{
+                        //    if (GetPlayCameraEvent != null)
+                        //    {
+                        //        GetPlayCameraEvent(model.Content);
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    MessageBox.Show("解析摄像头字符串错误");
+                        //}
+                        if (recStr == "\u0001")
                         {
-                            Array.Copy(rcvBufferTemp, rcvBuffer, length);//程序会一直往内存中的缓存里面写入数据，但是PLCGroup是按周期把里面的数据取出后作为新接收到的数据 和 Itag 列表里面的值进行比较。
+                            GetPlayCameraEvent("172.16.16.120");
                         }
-                    }
-                    else
-                    {
-                        Array.Copy(rcvBufferTemp, rcvBuffer, length);
-                    }
+                        else
+                        {
+                            GetPlayCameraEvent("172.16.16.121");
+                        }
+                        _rcvTime = DateTime.Now;
+                        RcvByteCnt = length;
+                        RcvByteSumCnt += length;
 
-                    if ((GetRcvBufferEvent != null) && (length > 0))
-                    {
-                        dt.SetValue(false, Encoding.UTF8.GetString(rcvBuffer, 0, length), fromPoint.ToString(), length);
-                        GetRcvBufferEvent(dt);
+                        if (bUseAsPro)
+                        {
+                            //加入对收到的字节序列  头、校验和、帧尾的判读，并计数 正确的帧数 和校验和失败的 帧数
+                            if (true)
+                            {
+                                Array.Copy(rcvBufferTemp, rcvBuffer, length);//程序会一直往内存中的缓存里面写入数据，但是PLCGroup是按周期把里面的数据取出后作为新接收到的数据 和 Itag 列表里面的值进行比较。
+                            }
+                        }
+                        else
+                        {
+                            Array.Copy(rcvBufferTemp, rcvBuffer, length);
+                        }
+
+                        if ((GetRcvBufferEvent != null) && (length > 0))
+                        {
+                            dt.SetValue(false, Encoding.UTF8.GetString(rcvBuffer, 0, length), fromPoint.ToString(), length);
+                            GetRcvBufferEvent(dt);
+                        }
                     }
                 }
-            };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace);
+            }
         }
 
         public void SendData(byte[] buffer)

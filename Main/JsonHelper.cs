@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+
 namespace PlayCamera
 {
     /// <summary>
@@ -43,7 +45,14 @@ namespace PlayCamera
         /// <returns>反序列化后的实体对象</returns>
         public static T ToModel<T>(this string jsonString)
         {
-            return JsonHelper.DeserializeObject<T>(jsonString);
+            try
+            {
+                return JsonHelper.DeserializeObject<T>(jsonString);
+            }
+            catch (Exception ex)
+            {
+                return default(T);
+            }
         }
 
         /// <summary>

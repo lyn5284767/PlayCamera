@@ -67,36 +67,47 @@ namespace PlayCamera
         }
 
         private delegate void PlayDelegate(Grid gridCamera, ICameraFactory camera);
+        private delegate void GetPlayCamList(Grid gd);
+        List<ICameraFactory> camList = new List<ICameraFactory>();
         /// <summary>
         /// 跨线程调用播放视频
         /// </summary>
         public void PlayCamera()
         {
-            Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
-            if (node != null)
+            camList.Clear();
+            for (int i = 0; i < GlobalInfo.Instance.fourGdList.Count; i++)
             {
-                int groupID = node.NodeId;
-                List<ICameraFactory> camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
-                for (int i = 0; i < GlobalInfo.Instance.fourGdList.Count; i++)
+                var data = GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.fourGdList[i] });
+            }
+            if (camList.Count == 0)
+            {
+                Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
+                if (node != null)
                 {
-                    if (camList.Count > i)
-                    {
-                        GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], camList[i] });
-                    }
-                    else
-                    {
-                        GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], null });
-                    }
+                    int groupID = node.NodeId;
+                    camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
                 }
             }
-            //if (camList.Count >= 1)
-            //    this.gridCamera1.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.gridCamera1, camList[0]});
-            //if (camList.Count >= 2)
-            //    this.gridCamera2.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.gridCamera2, camList[1]});
-            //if (camList.Count >= 3)
-            //    this.gridCamera3.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.gridCamera3, camList[2]});
-            //if (camList.Count >= 4)
-            //    this.gridCamera4.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.gridCamera4, camList[3]});
+
+            for (int i = 0; i < GlobalInfo.Instance.fourGdList.Count; i++)
+            {
+                if (camList.Count > i)
+                {
+                    GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], camList[i] });
+                }
+                else
+                {
+                    GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], null });
+                }
+            }
+        }
+
+        private void GetPlayCamera(Grid gd)
+        {
+            if (gd.Tag is ICameraFactory)
+            {
+                camList.Add(gd.Tag as ICameraFactory);
+            }
         }
 
         public void PlaySelectCamera(Grid gridCamera, ICameraFactory camera)
@@ -248,6 +259,7 @@ namespace PlayCamera
             //    MessageBox.Show(ex.StackTrace);
             //}
         }
+
 
         private void Play(ICameraFactory camera,ChannelInfo clInfo, Grid gridCamera)
         {
@@ -456,6 +468,13 @@ namespace PlayCamera
         public void Dispose()
         {
             
+        }
+        /// <summary>
+        /// 动态获取播放窗口大小
+        /// </summary>
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            PlayCamera();
         }
     }
 }

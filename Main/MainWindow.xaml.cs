@@ -27,14 +27,13 @@ namespace PlayCamera
     /// </summary>
     public partial class MainWindow : Window
     {
-        System.Timers.Timer cameraSaveThreadTimer = new System.Timers.Timer();
-        BrushConverter bc = new BrushConverter();
-        bool connect = false;
+        System.Timers.Timer cameraSaveThreadTimer = new System.Timers.Timer();// 摄像头存储定时器
+        BrushConverter bc = new BrushConverter();// 全局画刷，标记选中颜色
         //ViewModel viewModel = new ViewModel();
         public MainWindow()
         {
             InitializeComponent();
-            this.gdAll.Children.Add(FullPlayCamera.Instance);
+            this.gdAll.Children.Add(FullPlayCamera.Instance);// 首先添加一次用于获得全屏尺寸
             //this.DataContext = viewModel;
             GlobalInfo.Instance.nowPanel = NowPanel.Four;
             //InitCameraGroup();
@@ -50,7 +49,10 @@ namespace PlayCamera
             //connect = Connect();
             this.Loaded += MainWindow_Loaded;
         }
-
+        /// <summary>
+        /// 根据UDP传输数据得播放摄像头回调
+        /// </summary>
+        /// <param name="camIP">摄像头IP</param>
         private void Con_GetPlayCameraEvent(string camIP)
         {
             try
@@ -63,7 +65,10 @@ namespace PlayCamera
                 
             }
         }
-
+        /// <summary>
+        /// 全屏播放
+        /// </summary>
+        /// <param name="camIP">摄像头IP</param>
         private void PlayFullScreen(string camIP)
         {
             this.gdMain.Visibility = Visibility.Collapsed;
@@ -117,7 +122,9 @@ namespace PlayCamera
         //    }
         //    return false;
         //}
-
+        /// <summary>
+        /// Step.1:初始化摄像头树列表
+        /// </summary>
         private void InitCameraTree()
         {
             this.tvCamera.Height = this.Height;
@@ -193,7 +200,10 @@ namespace PlayCamera
                 ExpandTree(GlobalInfo.Instance.SelectNode);
             }
         }
-
+        /// <summary>
+        /// 展开树
+        /// </summary>
+        /// <param name="node"></param>
         private void ExpandTree(Node node)
         {
             DependencyObject dependencyObject = this.tvCamera.ItemContainerGenerator.ContainerFromItem(node);
@@ -204,7 +214,7 @@ namespace PlayCamera
         }
 
         /// <summary>
-        /// Step 1.初始化摄像头组
+        /// Step 1.初始化摄像头组（弃用）
         /// </summary>
         private void InitCameraGroup()
         {
@@ -225,7 +235,7 @@ namespace PlayCamera
         }
 
         /// <summary>
-        /// Step 2.初始化摄像头信息
+        /// Step 2.初始化摄像头信息（弃用）
         /// </summary>
         private void InitCameraInfo()
         {
@@ -256,9 +266,9 @@ namespace PlayCamera
                 GlobalInfo.Instance.cameraWithPlayPanelList.Add(tmp);
             }
         }
-       
+
         /// <summary>
-        /// Step 3.摄像头绑定播放Grid
+        /// Step 3.摄像头绑定播放Grid（弃用）
         /// </summary>
         private void CameraBindGrid()
         {
@@ -286,7 +296,7 @@ namespace PlayCamera
             }
         }
         /// <summary>
-        /// Step 4.初始化播放列表
+        /// Step 4.初始化播放列表（弃用）
         /// </summary>
         private void InitPlayList()
         {
@@ -301,7 +311,7 @@ namespace PlayCamera
         }
 
         /// <summary>
-        /// step 5.初始化摄像头录像线程
+        /// step 2.初始化摄像头录像线程
         /// </summary>
         private void InitCameraSaveTimeThread()
         {
@@ -311,7 +321,7 @@ namespace PlayCamera
         }
 
         /// <summary>
-        /// step 6.初始化播放画面
+        /// step 3.初始化播放画面
         /// </summary>
         private void InitPlayPanel()
         {
@@ -402,7 +412,9 @@ namespace PlayCamera
             GlobalInfo.Instance.SelectGroup = ((sender as Expander).Tag as CameraGroup);
             GlobalInfo.Instance.SelectCamera = null;
         }
-
+        /// <summary>
+        /// 弃用
+        /// </summary>
         private ListBoxItem InitListBoxItem(CameraWithPlayPanel item)
         {
             ListBoxItem listBoxItem = new ListBoxItem();
@@ -430,7 +442,9 @@ namespace PlayCamera
 
             return listBoxItem;
         }
-
+        /// <summary>
+        /// 保存摄像头视频
+        /// </summary>
         private void CameraSaveThreadTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (cameraSaveThreadTimer.Interval == 1) cameraSaveThreadTimer.Interval = 60 * 1000;
@@ -439,7 +453,7 @@ namespace PlayCamera
                 foreach (ICameraFactory camera in GlobalInfo.Instance.CameraList)
                 {
                     string filePath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.ID;
-                    string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
+                   string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
                     camera.StopFile();
                     camera.SaveFile(filePath, fileName);
                 }
@@ -451,8 +465,8 @@ namespace PlayCamera
         /// <summary>
         /// CameraInfo转为ChannelInfo
         /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
+        /// <param name="info">摄像头信息</param>
+        /// <returns>摄像头通道信息</returns>
         private ChannelInfo CameraInfoToChannelInfo(CameraInfo info)
         {
             ChannelInfo ch1 = new ChannelInfo();
@@ -479,7 +493,7 @@ namespace PlayCamera
         {
             System.IO.DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
             string[] disk = path.Split('\\');
-            // 硬盘空间小于1G，开始清理录像
+            // 硬盘空间小于2G，开始清理录像
             foreach (System.IO.DriveInfo drive in drives)
             {
                 if (drive.Name == disk[0] + "\\" && drive.TotalFreeSpace / (1024 * 1024) < 1024*2)
@@ -660,7 +674,10 @@ namespace PlayCamera
             //    }
             //}
         }
-
+        /// <summary>
+        /// 弃用
+        /// </summary>
+        /// <param name="control"></param>
         private void ExpandAllItems(ItemsControl control)
         {
             if (control == null)
@@ -682,6 +699,11 @@ namespace PlayCamera
                 ExpandAllItems(treeItem as ItemsControl);
             }
         }
+        /// <summary>
+        /// 递归方法：根据播放状态修改播放图标
+        /// </summary>
+        /// <param name="nodeList">待寻找节点</param>
+        /// <param name="playIdList">播放摄像头ID列表</param>
         private void FindPlayNode(List<Node> nodeList, List<int> playIdList)
         {
             foreach (Node node in nodeList)
@@ -734,7 +756,9 @@ namespace PlayCamera
                 }
             }
         }
-
+        /// <summary>
+        /// 弃用
+        /// </summary>
         private void lbCamera_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (Border bd in FindVisualChildren<Border>(FourPanel.Instance.gdMain))
@@ -753,8 +777,6 @@ namespace PlayCamera
         /// <summary>
         /// 双击播放或者停止摄像头
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MouseDown_PlayCamera(object sender, MouseButtonEventArgs e)
         {
             int tag = int.Parse((sender as StackPanel).Tag.ToString());
@@ -794,7 +816,9 @@ namespace PlayCamera
                 }
             }
         }
-
+        /// <summary>
+        /// 左列表隐藏
+        /// </summary>
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (firstCol.Width.Value > 0)
@@ -804,16 +828,6 @@ namespace PlayCamera
             else
             {
                 firstCol.Width = new GridLength(1, GridUnitType.Star);
-            }
-            if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
-            {
-                this.MainPanel.Children.Clear();
-                this.MainPanel.Children.Add(FourPanel.Instance);
-            }
-            else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
-            {
-                this.MainPanel.Children.Clear();
-                this.MainPanel.Children.Add(NinePanel.Instance);
             }
         }
         /// <summary>
@@ -1013,7 +1027,9 @@ namespace PlayCamera
             //    }
             //}
         }
-
+        /// <summary>
+        /// 修改摄像头
+        /// </summary>
         private void ModifyCamera_Click(object sender, RoutedEventArgs e)
         {
             if (!(GlobalInfo.Instance.SelectNode.Tag is CameraInfo))
@@ -1069,7 +1085,9 @@ namespace PlayCamera
             //    }
             //}
         }
-
+        /// <summary>
+        /// 删除摄像头
+        /// </summary>
         private void DelCamera_Click(object sender, RoutedEventArgs e)
         {
             if (!(GlobalInfo.Instance.SelectNode.Tag is CameraInfo))
@@ -1104,7 +1122,11 @@ namespace PlayCamera
             //    }
             //}
         }
-
+        /// <summary>
+        /// 递归方法：递归寻找待删除摄像头
+        /// </summary>
+        /// <param name="selectNode">选中得节点</param>
+        /// <param name="NodeList">节点列表</param>
         private void DeleteSelectCamera(Node selectNode,List<Node> NodeList)
         {
             foreach (Node tmp in NodeList)
@@ -1120,7 +1142,9 @@ namespace PlayCamera
                 }
             }
         }
-
+        /// <summary>
+        /// 双击播放
+        /// </summary>
         private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
@@ -1151,7 +1175,9 @@ namespace PlayCamera
                 }
             }
         }
-
+        /// <summary>
+        /// 树列表右键选中
+        /// </summary>
         private void TreeViewItem_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             var treeViewItem = VisualUpwardSearch<TreeViewItem>(e.OriginalSource as DependencyObject) as TreeViewItem;

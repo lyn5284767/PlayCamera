@@ -62,28 +62,39 @@ namespace PlayCamera
         }
 
         private delegate void PlayDelegate(Grid gridCamera, ICameraFactory camera);
+        private delegate void GetPlayCamList(Grid gd);
+        List<ICameraFactory> camList = new List<ICameraFactory>();
         /// <summary>
         /// 跨线程调用播放视频
         /// </summary>
         public void PlayCamera()
         {
-            Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
-            if (node != null)
+            camList.Clear();
+            for (int i = 0; i < GlobalInfo.Instance.nineGdList.Count; i++) // 获取播放面板绑定得摄像头
             {
-                int groupID = node.NodeId;
-                List<ICameraFactory> camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
-                for (int i = 0; i < GlobalInfo.Instance.nineGdList.Count; i++)
+                var data = GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.fourGdList[i] });
+            }
+            if (camList.Count == 0) // 如果没有半丁摄像头则获取第一组摄像头
+            {
+                Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
+                if (node != null)
                 {
-                    if (camList.Count > i)
-                    {
-                        GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], camList[i] });
-                    }
-                    else
-                    {
-                        GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], null });
-                    }
+                    int groupID = node.NodeId;
+                    camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
                 }
             }
+            for (int i = 0; i < GlobalInfo.Instance.nineGdList.Count; i++)
+            {
+                if (camList.Count > i)
+                {
+                    GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], camList[i] });
+                }
+                else
+                {
+                    GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], null });
+                }
+            }
+            
             //this.ninegridCamera1.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera1, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 1).FirstOrDefault() });
             //this.ninegridCamera2.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera2, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 2).FirstOrDefault() });
             //this.ninegridCamera3.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera3, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 3).FirstOrDefault() });
@@ -94,11 +105,31 @@ namespace PlayCamera
             //this.ninegridCamera8.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera8, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 8).FirstOrDefault() });
             //this.ninegridCamera9.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera9, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 9).FirstOrDefault() });
         }
-
+        /// <summary>
+        /// 获取面板绑定摄像头
+        /// </summary>
+        /// <param name="gd"></param>
+        private void GetPlayCamera(Grid gd)
+        {
+            if (gd.Tag is ICameraFactory)
+            {
+                camList.Add(gd.Tag as ICameraFactory);
+            }
+        }
+        /// <summary>
+        /// 播放选中摄像头
+        /// </summary>
+        /// <param name="gridCamera">播放面板</param>
+        /// <param name="camera">播放摄像头</param>
         public void PlaySelectCamera(Grid gridCamera, ICameraFactory camera)
         {
             gridCamera.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { gridCamera, camera });
         }
+        /// <summary>
+        /// 播放摄像头
+        /// </summary>
+        /// <param name="gridCamera">播放面板</param>
+        /// <param name="camera">播放摄像头</param>
         private void PlayAction(Grid gridCamera, ICameraFactory camera)
         {
             Image cameraInitImage = new Image();
@@ -173,7 +204,9 @@ namespace PlayCamera
                 gridCamera.Children.Add(cameraInitImage);
             }
         }
-
+        /// <summary>
+        /// 选中摄像头绑定播放列表
+        /// </summary>
         private void Camera_SelectCameraEvent(int cameraID)
         {
             var bc = new BrushConverter();
@@ -244,7 +277,10 @@ namespace PlayCamera
             }
             return null;
         }
-
+        /// <summary>
+        /// 全屏
+        /// </summary>
+        /// <param name="cameraID"></param>
         private void Camera_FullScreenEvent(int cameraID)
         {
             if (FullScreenEvent != null)
@@ -264,7 +300,9 @@ namespace PlayCamera
         public delegate void IsCameraPlayHandler(int camId, bool isPlay);
 
         public event IsCameraPlayHandler IsCameraPlayEvent;
-
+        /// <summary>
+        /// 查询子元素
+        /// </summary>
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
@@ -284,7 +322,9 @@ namespace PlayCamera
                 }
             }
         }
-
+        /// <summary>
+        /// 选中播放平面（未绑定摄像头）
+        /// </summary>
         private void bd_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Border border = sender as Border;
@@ -312,6 +352,13 @@ namespace PlayCamera
                     FullScreenEvent(int.Parse(border.Tag.ToString()));
                 }
             }
+        }
+        /// <summary>
+        /// 动态获取播放面板大小
+        /// </summary>
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            PlayCamera();
         }
     }
 }

@@ -301,26 +301,26 @@ namespace PlayCamera
                     if (length > 0)
                     {
                         string recStr = System.Text.Encoding.Default.GetString(rcvBufferTemp).Substring(0, length);
-                        //UdpModel model = recStr.ToModel<UdpModel>();
-                        //if (model != null && model.UdpType == UdpType.PlayCamera) // 播放摄像头 
-                        //{
-                        //    if (GetPlayCameraEvent != null)
-                        //    {
-                        //        GetPlayCameraEvent(model.Content);
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    MessageBox.Show("解析摄像头字符串错误");
-                        //}
-                        if (recStr == "\u0001")
+                        UdpModel model = recStr.ToModel<UdpModel>();
+                        if (model != null && model.UdpType == UdpType.PlayCamera) // 播放摄像头 
                         {
-                            GetPlayCameraEvent("172.16.16.120");
+                            if (GetPlayCameraEvent != null)
+                            {
+                                GetPlayCameraEvent(model.Content);
+                            }
                         }
                         else
                         {
-                            GetPlayCameraEvent("172.16.16.121");
+                            MessageBox.Show("解析摄像头字符串错误");
                         }
+                        //if (recStr == "\u0001")
+                        //{
+                        //    GetPlayCameraEvent("172.16.16.120");
+                        //}
+                        //else
+                        //{
+                        //    GetPlayCameraEvent("172.16.16.121");
+                        //}
                         _rcvTime = DateTime.Now;
                         RcvByteCnt = length;
                         RcvByteSumCnt += length;

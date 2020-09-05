@@ -48,9 +48,15 @@ namespace PlayCamera
             this.Loaded += FourPanel_Loaded;
         }
 
+        bool isLoad = false;
+
         private void FourPanel_Loaded(object sender, RoutedEventArgs e)
         {
-            PlayCameraInThread();
+            if (!isLoad)
+            {
+                isLoad = true;
+                PlayCameraInThread();
+            }
         }
 
         public void PlayCameraInThread()
@@ -72,7 +78,7 @@ namespace PlayCamera
             camList.Clear();
             for (int i = 0; i < GlobalInfo.Instance.nineGdList.Count; i++) // 获取播放面板绑定得摄像头
             {
-                var data = GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.fourGdList[i] });
+                var data = GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.nineGdList[i] });
             }
             if (camList.Count == 0) // 如果没有半丁摄像头则获取第一组摄像头
             {
@@ -358,7 +364,11 @@ namespace PlayCamera
         /// </summary>
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            PlayCamera();
+            if (isLoad)
+            {
+                isLoad = false;
+                PlayCamera();
+            }
         }
     }
 }

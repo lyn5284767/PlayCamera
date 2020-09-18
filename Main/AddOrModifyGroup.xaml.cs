@@ -114,6 +114,11 @@ namespace Main
         {
             this.Close();
         }
+
+        private void tbGroupName_GotFocus(object sender, RoutedEventArgs e)
+        {
+            WinAPI.TextBox_Name_GotFocus(null, null);
+        }
     }
 
 

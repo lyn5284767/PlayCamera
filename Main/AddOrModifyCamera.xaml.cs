@@ -161,6 +161,7 @@ namespace Main
                     this.tbCameraUser.Text = "admin";
                     this.tbCameraPwd.Text = "123456";
                     this.tbPlayPort.Text = "1";
+                    this.tbPlayPort.Text = (GlobalInfo.Instance.CameraList.Max(m => m.Info.nPlayPort) +1).ToString();
                 }
                 else if (cb.SelectedIndex == 1)
                 {
@@ -168,8 +169,14 @@ namespace Main
                     this.tbCameraUser.Text = "admin";
                     this.tbCameraPwd.Text = "";
                     this.tbPlayPort.Text = "1";
+                    this.tbPlayPort.Text = (GlobalInfo.Instance.CameraList.Max(m => m.Info.nPlayPort) + 1).ToString();
                 }
             }
+        }
+
+        private void tb_GotFocus(object sender, RoutedEventArgs e)
+        {
+            WinAPI.TextBox_Name_GotFocus(null, null);
         }
     }
 }

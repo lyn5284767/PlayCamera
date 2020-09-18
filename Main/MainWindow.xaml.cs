@@ -455,7 +455,7 @@ namespace PlayCamera
             {
                 foreach (ICameraFactory camera in GlobalInfo.Instance.CameraList)
                 {
-                    string filePath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.ID;
+                    string filePath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.CameraName;
                    string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
                     camera.StopFile();
                     camera.SaveFile(filePath, fileName);

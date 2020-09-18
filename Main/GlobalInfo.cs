@@ -76,6 +76,10 @@ namespace PlayCamera
         /// 远端端口
         /// </summary>
         public int RemotePort { get; set; }
+        /// <summary>
+        /// 通信是否打开 0-关闭； 1-打开
+        /// </summary>
+        public int Open { get; set; }
     }
     /// <summary>
     /// 摄像头分屏枚举

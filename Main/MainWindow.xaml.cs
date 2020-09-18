@@ -43,9 +43,12 @@ namespace PlayCamera
             //InitCameraTree();
             string sql = "Select * from GloConfig";
             GlobalInfo.Instance.GloConfig = SQLiteFac.Instance.ExecuteList<GloConfig>(sql).FirstOrDefault();
-            IConnect con = new UDPConnect(GlobalInfo.Instance.GloConfig.LocalIP, GlobalInfo.Instance.GloConfig.LocalPort, GlobalInfo.Instance.GloConfig.RemoteIP, GlobalInfo.Instance.GloConfig.RemotePort);
-            con.GetPlayCameraEvent += Con_GetPlayCameraEvent;
-            con.OpenConnect();
+            if (GlobalInfo.Instance.GloConfig.Open == 1)
+            {
+                IConnect con = new UDPConnect(GlobalInfo.Instance.GloConfig.LocalIP, GlobalInfo.Instance.GloConfig.LocalPort, GlobalInfo.Instance.GloConfig.RemoteIP, GlobalInfo.Instance.GloConfig.RemotePort);
+                con.GetPlayCameraEvent += Con_GetPlayCameraEvent;
+                con.OpenConnect();
+            }
             //connect = Connect();
             this.Loaded += MainWindow_Loaded;
         }

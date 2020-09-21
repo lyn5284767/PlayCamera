@@ -54,6 +54,9 @@ namespace PlayCamera
         public Grid SelectGrid { get; set; } // 选择的播放面
 
         public GloConfig GloConfig { get; set; }
+
+        public bool FourClick = false;
+        public bool NineClick = false;
     }
     /// <summary>
     /// 全局配置

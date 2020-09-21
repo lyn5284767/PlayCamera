@@ -47,6 +47,7 @@ namespace PlayCamera
                 return _instance;
             }
         }
+        bool isload = false;
         public FourPanel()
         {
             InitializeComponent();
@@ -55,15 +56,22 @@ namespace PlayCamera
 
         private void FourPanel_Loaded(object sender, RoutedEventArgs e)
         {
-            PlayCameraInThread();
+            GlobalInfo.Instance.FourClick = false;
+            //if (!isload)
+            //{
+            //    isload = true;
+                PlayCameraInThread();
+            //}
         }
 
         public void PlayCameraInThread()
         {
-            Task.Factory.StartNew(() =>
-            {
+            GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+            //GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
+            //Task.Factory.StartNew(() =>
+            //{
                 PlayCamera();
-            });
+            //});
         }
 
         private delegate void PlayDelegate(Grid gridCamera, ICameraFactory camera);
@@ -87,17 +95,27 @@ namespace PlayCamera
                     int groupID = node.NodeId;
                     camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
                 }
-            }
-
-            for (int i = 0; i < GlobalInfo.Instance.fourGdList.Count; i++)
-            {
-                if (camList.Count > i)
+                for (int i = 0; i < GlobalInfo.Instance.fourGdList.Count; i++)
                 {
-                    GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], camList[i] });
+                    if (camList.Count > i)
+                    {
+                        GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], camList[i] });
+                    }
+                    else
+                    {
+                        GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], null });
+                    }
                 }
-                else
+            }
+            else
+            {
+                foreach (ICameraFactory cam in camList)
                 {
-                    GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], null });
+                    for (int i = 0; i < GlobalInfo.Instance.fourGdList.Count; i++)
+                    {
+                        if ((GlobalInfo.Instance.fourGdList[i].Tag is ICameraFactory) && (GlobalInfo.Instance.fourGdList[i].Tag as ICameraFactory).Info.ID == cam.Info.ID)
+                            GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.fourGdList[i], cam });
+                    }
                 }
             }
         }
@@ -133,7 +151,7 @@ namespace PlayCamera
             {
                 if (gridCamera != null && camera != null)
                 {
-                    GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+                   
                     //if (camera is UIControl_HBGK1)
                     //{
                     //    UIControl_HBGK1 cam = new UIControl_HBGK1(camera.Info);
@@ -474,7 +492,11 @@ namespace PlayCamera
         /// </summary>
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            PlayCamera();
+            if (!GlobalInfo.Instance.FourClick)
+            {
+                PlayCameraInThread();
+            }
+            
         }
     }
 }

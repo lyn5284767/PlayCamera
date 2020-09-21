@@ -137,7 +137,7 @@ namespace PlayCamera
             GlobalInfo.Instance.CameraInfoList = SQLiteFac.Instance.ExecuteList<CameraInfo>(sql);
             Node root = new Node();
             root.NodeId = 0;
-            root.NodeName = "根节点";
+            root.NodeName = "视频系统";
             GlobalInfo.Instance.CamList.Add(root);
             foreach (CameraGroup group in GlobalInfo.Instance.GroupList)
             {
@@ -523,6 +523,8 @@ namespace PlayCamera
             //this.gdNine.Background = (Brush)bc.ConvertFrom("#FFFFFF");
             GlobalInfo.Instance.nowPanel = NowPanel.Four;
             //CameraBindGrid();
+            //FourPanel.Instance.PlayCameraInThread();
+            GlobalInfo.Instance.FourClick = true;
         }
         /// <summary>
         /// 双击全屏
@@ -559,6 +561,8 @@ namespace PlayCamera
             imgNine.Source = new BitmapImage(new Uri("/Images/NineSelect.png", UriKind.Relative));
             GlobalInfo.Instance.nowPanel = NowPanel.Nine;
             //CameraBindGrid();
+            //NinePanel.Instance.PlayCameraInThread();
+            GlobalInfo.Instance.NineClick = true;
         }
         /// <summary>
         /// 退出
@@ -600,11 +604,11 @@ namespace PlayCamera
             this.gdMain.Visibility = Visibility.Visible;
             if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
             {
-                FourPanel.Instance.PlayCamera();
+                FourPanel.Instance.PlayCameraInThread();
             }
             else
             {
-                NinePanel.Instance.PlayCamera();
+                NinePanel.Instance.PlayCameraInThread();
             }
             this.gdAll.Children.Remove(FullPlayCamera.Instance);
         }

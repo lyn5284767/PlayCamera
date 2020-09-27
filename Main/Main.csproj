@@ -69,6 +69,10 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.3.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="HandyControl, Version=2.5.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\x86\Debug\HandyControl.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -107,6 +111,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\x86\Debug\Util.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="Vlc.DotNet.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=84529da31f4eb963, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vlc.DotNet.Core.3.1.0\lib\net40\Vlc.DotNet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Vlc.DotNet.Core.Interops, Version=3.1.0.0, Culture=neutral, PublicKeyToken=84529da31f4eb963, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vlc.DotNet.Core.Interops.3.1.0\lib\net40\Vlc.DotNet.Core.Interops.dll</HintPath>
+    </Reference>
+    <Reference Include="Vlc.DotNet.Wpf, Version=3.1.0.0, Culture=neutral, PublicKeyToken=84529da31f4eb963, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vlc.DotNet.Wpf.3.1.0\lib\net40\Vlc.DotNet.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -134,12 +147,18 @@
     <Compile Include="NinePanel.xaml.cs">
       <DependentUpon>NinePanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlayVideoWindow.xaml.cs">
+      <DependentUpon>PlayVideoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SQLiteFac.cs" />
+    <Compile Include="VideoList.xaml.cs">
+      <DependentUpon>VideoList.xaml</DependentUpon>
+    </Compile>
     <Page Include="AddOrModifyCamera.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -171,6 +190,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="NinePanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlayVideoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VideoList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -224,6 +251,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\NineSelect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\video.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

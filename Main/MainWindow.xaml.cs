@@ -34,13 +34,7 @@ namespace PlayCamera
         {
             InitializeComponent();
             this.gdAll.Children.Add(FullPlayCamera.Instance);// 首先添加一次用于获得全屏尺寸
-            //this.DataContext = viewModel;
             GlobalInfo.Instance.nowPanel = NowPanel.Four;
-            //InitCameraGroup();
-            //InitCameraInfo();
-            ////CameraBindGrid();
-            //InitPlayList();
-            //InitCameraTree();
             string sql = "Select * from GloConfig";
             GlobalInfo.Instance.GloConfig = SQLiteFac.Instance.ExecuteList<GloConfig>(sql).FirstOrDefault();
             if (GlobalInfo.Instance.GloConfig.Open == 1)
@@ -49,7 +43,6 @@ namespace PlayCamera
                 con.GetPlayCameraEvent += Con_GetPlayCameraEvent;
                 con.OpenConnect();
             }
-            //connect = Connect();
             this.Loaded += MainWindow_Loaded;
         }
         /// <summary>
@@ -137,7 +130,7 @@ namespace PlayCamera
             GlobalInfo.Instance.CameraInfoList = SQLiteFac.Instance.ExecuteList<CameraInfo>(sql);
             Node root = new Node();
             root.NodeId = 0;
-            root.NodeName = "根节点";
+            root.NodeName = "视频监控";
             GlobalInfo.Instance.CamList.Add(root);
             foreach (CameraGroup group in GlobalInfo.Instance.GroupList)
             {
@@ -450,16 +443,19 @@ namespace PlayCamera
         /// </summary>
         private void CameraSaveThreadTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (cameraSaveThreadTimer.Interval == 1) cameraSaveThreadTimer.Interval = 60 * 1000;
+            if (cameraSaveThreadTimer.Interval == 1) cameraSaveThreadTimer.Interval = 5 * 60 * 1000;
             try
             {
                 foreach (ICameraFactory camera in GlobalInfo.Instance.CameraList)
                 {
-                    string filePath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.CameraName;
-                   string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
+                    string mainPath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.CameraName;
+                    string secondPath = "\\" + DateTime.Now.Year + "年\\" + DateTime.Now.Month + "月\\" + DateTime.Now.ToString("yyyy-MM-dd");
+                    string filePath = mainPath + secondPath;
+                    string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
                     camera.StopFile();
                     camera.SaveFile(filePath, fileName);
                 }
+                DeleteOldFileName(System.Environment.CurrentDirectory + "\\video");
             }
             catch (Exception ex)
             { }
@@ -487,7 +483,7 @@ namespace PlayCamera
             ch1.CamGroup = info.CamGroup;
             return ch1;
         }
-
+        List<DirectoryInfo> dirList = new List<DirectoryInfo>();
         /// <summary>
         /// 删除最老的视频文件
         /// </summary>
@@ -501,13 +497,76 @@ namespace PlayCamera
             {
                 if (drive.Name == disk[0] + "\\" && drive.TotalFreeSpace / (1024 * 1024) < 1024*2)
                 {
-                    DirectoryInfo root = new DirectoryInfo(path);
-                    List<FileInfo> fileList = root.GetFiles().OrderBy(s => s.CreationTime).Take(10).ToList();
-                    foreach (FileInfo file in fileList)
+                    dirList.Clear();
+                    ForeachDir(path);
+                    DateTime date = dirList.Min(m => m.CreationTime).Date;
+                    foreach (DirectoryInfo info in dirList)
                     {
-                        file.Delete();
+                        if (info.CreationTime.Date == date)
+                        {
+                            info.Delete(true);
+                        }
+                    }
+                    //DirectoryInfo root = new DirectoryInfo(path);
+                    //List<FileInfo> fileList = root.GetFiles().OrderBy(s => s.CreationTime).Take(10).ToList();
+                    //foreach (FileInfo file in fileList)
+                    //{
+                    //    file.Delete();
+                    //}
+                }
+            }
+        }
+        /// <summary>
+        /// 递归获取文件夹
+        /// </summary>
+        /// <param name="path">总目录</param>
+        public void ForeachDir(string path)
+        {
+            DirectoryInfo theFolder = new DirectoryInfo(path);
+            // 录像总目录
+            DirectoryInfo[] dirInfo = theFolder.GetDirectories();
+            if (dirInfo.Count() == 0)
+            {
+                if (theFolder.Name.Contains("年") || theFolder.Name.Contains("月"))
+                {
+                    theFolder.Delete();
+                }
+                dirList.Add(theFolder);
+            }
+            //遍历摄像头目录
+            foreach (DirectoryInfo NextFolder in dirInfo)
+            {
+                ForeachDir(NextFolder.FullName);
+            }
+        }
+        /// <summary>
+        /// 删除文件夹及子文件内文件
+        /// </summary>
+        /// <param name="path">待删除文件</param>
+        public void DeleteFiles(string path)
+        {
+            DirectoryInfo fatherFolder = new DirectoryInfo(path);
+            //删除当前文件夹内文件
+            FileInfo[] files = fatherFolder.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                //string fileName = file.FullName.Substring((file.FullName.LastIndexOf("\\") + 1), file.FullName.Length - file.FullName.LastIndexOf("\\") - 1);
+                string fileName = file.Name;
+                try
+                {
+                    if (!fileName.Equals("index.dat"))
+                    {
+                        File.Delete(file.FullName);
                     }
                 }
+                catch (Exception ex)
+                {
+                }
+            }
+            //递归删除子文件夹内文件
+            foreach (DirectoryInfo childFolder in fatherFolder.GetDirectories())
+            {
+                DeleteFiles(childFolder.FullName);
             }
         }
         /// <summary>
@@ -1252,6 +1311,12 @@ namespace PlayCamera
                     }
                 }
             }
+        }
+
+        private void Video_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.MainPanel.Children.Clear();
+            this.MainPanel.Children.Add(VideoList.Instance);
         }
     }
 

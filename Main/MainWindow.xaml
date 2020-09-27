@@ -118,6 +118,9 @@
                         <Grid Name="cameraList" Margin="10,0,10,0">
                             <Image Source="/Images/List.png" MouseLeftButtonDown="Image_MouseLeftButtonDown"/>
                         </Grid>
+                        <Grid Margin="10,0,10,0">
+                            <Image Source="/Images/video.png" MouseLeftButtonDown="Video_MouseLeftButtonDown"/>
+                        </Grid>
                         <Grid Name="gdFour" Margin="10,0,10,0">
                             <Image Name="imgFour" Source="/Images/FourSelect.png" MouseLeftButtonDown="FourImage_MouseLeftButtonDown"/>
                         </Grid>

@@ -73,4 +73,40 @@ namespace PlayCamera
         /// </summary>
         public string Name { get; set; }
     }
+
+    public class VideoInfo
+    {
+        /// <summary>
+        /// 主键ID
+        /// </summary>
+        public int ID { get; set; }
+        /// <summary>
+        /// 保存日期
+        /// </summary>
+        public DateTime SaveTime { get; set; }
+        /// <summary>
+        /// 列表显示时间
+        /// </summary>
+        public string ShowTime { get; set; }
+        /// <summary>
+        /// 文件名
+        /// </summary>
+        public string FileName { get; set; }
+        /// <summary>
+        /// 录像路径
+        /// </summary>
+        public string FullPath { get; set; }
+    }
+
+    public class DirLink
+    {
+        /// <summary>
+        /// 文件夹名
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// 父文件夹名
+        /// </summary>
+        public string ParentName { get; set; }
+    }
 }

@@ -58,10 +58,10 @@ namespace PlayCamera
 
         public void PlayCameraInThread()
         {
-            //Task.Factory.StartNew(() =>
-            //{
+            Task.Factory.StartNew(() =>
+            {
                 PlayCamera();
-            //});
+            });
         }
 
         private delegate void PlayDelegate(Grid gridCamera, ICameraFactory camera);
@@ -77,10 +77,13 @@ namespace PlayCamera
             {
                 var data = GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.nineGdList[i] });
             }
-            GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.nineGdList.ForEach(o => o.Tag = null);
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.nineGdList.ForEach(o => o.Tag = null);
+            }));
             if (camList.Count == 0) // 如果没有半丁摄像头则获取第一组摄像头
             {
                 Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
@@ -366,7 +369,7 @@ namespace PlayCamera
         {
             if (FirstLoad)
             {
-                PlayCamera();
+                PlayCameraInThread();
             }
         }
     }

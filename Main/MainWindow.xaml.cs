@@ -591,6 +591,7 @@ namespace PlayCamera
             this.MainPanel.Children.Add(FourPanel.Instance);
             imgFour.Source = new BitmapImage(new Uri("/Images/FourSelect.png", UriKind.Relative));
             imgNine.Source = new BitmapImage(new Uri("/Images/Nine.png", UriKind.Relative));
+            imgSix.Source = new BitmapImage(new Uri("/Images/Six.png", UriKind.Relative));
             //this.gdFour.Background = (Brush)bc.ConvertFrom("#A6CFDC");
             //this.gdNine.Background = (Brush)bc.ConvertFrom("#FFFFFF");
             GlobalInfo.Instance.nowPanel = NowPanel.Four;
@@ -629,6 +630,7 @@ namespace PlayCamera
             //this.gdNine.Background = (Brush)bc.ConvertFrom("#A6CFDC");
             imgFour.Source = new BitmapImage(new Uri("/Images/Four.png", UriKind.Relative));
             imgNine.Source = new BitmapImage(new Uri("/Images/NineSelect.png", UriKind.Relative));
+            imgSix.Source = new BitmapImage(new Uri("/Images/Six.png", UriKind.Relative));
             GlobalInfo.Instance.nowPanel = NowPanel.Nine;
             //CameraBindGrid();
         }
@@ -1369,8 +1371,9 @@ namespace PlayCamera
         {
             this.MainPanel.Children.Clear();
             this.MainPanel.Children.Add(SixPanel.Instance);
-            imgFour.Source = new BitmapImage(new Uri("/Images/FourSelect.png", UriKind.Relative));
+            imgFour.Source = new BitmapImage(new Uri("/Images/Four.png", UriKind.Relative));
             imgNine.Source = new BitmapImage(new Uri("/Images/Nine.png", UriKind.Relative));
+            imgSix.Source = new BitmapImage(new Uri("/Images/SixSelect.png", UriKind.Relative));
             GlobalInfo.Instance.nowPanel = NowPanel.Six;
         }
     }

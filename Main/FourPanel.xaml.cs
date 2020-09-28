@@ -62,10 +62,10 @@ namespace PlayCamera
 
         public void PlayCameraInThread()
         {
-            //Task.Factory.StartNew(() =>
-            //{
+            Task.Factory.StartNew(() =>
+            {
                 PlayCamera();
-            //});
+            });
         }
 
         private delegate void PlayDelegate(Grid gridCamera, ICameraFactory camera);
@@ -81,10 +81,13 @@ namespace PlayCamera
             {
                 var data = GlobalInfo.Instance.fourGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.fourGdList[i] });
             }
-            GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.fourGdList.ForEach(o => o.Tag = null);
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.fourGdList.ForEach(o => o.Tag = null);
+            }));
             if (camList.Count == 0)
             {
                 Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();

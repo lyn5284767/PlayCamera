@@ -60,10 +60,10 @@ namespace Main
 
         public void PlayCameraInThread()
         {
-            //Task.Factory.StartNew(() =>
-            //{
+            Task.Factory.StartNew(() =>
+            {
                 PlayCamera();
-            //});
+            });
         }
 
         private delegate void PlayDelegate(Grid gridCamera, ICameraFactory camera);
@@ -79,10 +79,13 @@ namespace Main
             {
                 var data = GlobalInfo.Instance.sixGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.sixGdList[i] });
             }
-            GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.sixGdList.ForEach(o => o.Tag = null);
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.sixGdList.ForEach(o => o.Tag = null);
+            }));
             if (camList.Count == 0) // 如果没有半丁摄像头则获取第一组摄像头
             {
                 Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
@@ -98,10 +101,10 @@ namespace Main
                 {
                     GlobalInfo.Instance.sixGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.sixGdList[i], camList[i] });
                 }
-                //else
-                //{
-                //    GlobalInfo.Instance.sixGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.sixGdList[i], null });
-                //}
+                else
+                {
+                    GlobalInfo.Instance.sixGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.sixGdList[i], null });
+                }
             }
 
             //this.ninegridCamera1.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera1, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 1).FirstOrDefault() });
@@ -368,7 +371,7 @@ namespace Main
         {
             if (FirstLoad)
             {
-                PlayCamera();
+                PlayCameraInThread();
             }
         }
     }

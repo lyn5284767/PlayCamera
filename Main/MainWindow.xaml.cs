@@ -352,6 +352,19 @@ namespace PlayCamera
             GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera7);
             GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera8);
             GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera9);
+            SixPanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
+            SixPanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
+            SixPanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
+            SixPanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
+            SixPanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
+            SixPanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
+            GlobalInfo.Instance.sixGdList.Clear();
+            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera1);
+            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera2);
+            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera3);
+            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera4);
+            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera5);
+            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera6);
         }
 
         /// <summary>
@@ -661,9 +674,13 @@ namespace PlayCamera
             {
                 FourPanel.Instance.PlayCamera();
             }
-            else
+            else if(GlobalInfo.Instance.nowPanel == NowPanel.Nine)
             {
                 NinePanel.Instance.PlayCamera();
+            }
+            else if (GlobalInfo.Instance.nowPanel == NowPanel.Six)
+            {
+                SixPanel.Instance.PlayCamera();
             }
             this.gdAll.Children.Remove(FullPlayCamera.Instance);
         }
@@ -703,6 +720,17 @@ namespace PlayCamera
             else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
             {
                 foreach (Grid gd in GlobalInfo.Instance.nineGdList)
+                {
+                    if (gd.Tag is ICameraFactory)
+                    {
+                        bool play = (gd.Tag as ICameraFactory).Info.IsPlay;
+                        if (play) playIdList.Add((gd.Tag as ICameraFactory).Info.ID);
+                    }
+                }
+            }
+            else if (GlobalInfo.Instance.nowPanel == NowPanel.Six)
+            {
+                foreach (Grid gd in GlobalInfo.Instance.sixGdList)
                 {
                     if (gd.Tag is ICameraFactory)
                     {
@@ -873,6 +901,22 @@ namespace PlayCamera
                         else
                         {
                             NinePanel.Instance.PlaySelectCamera(gdnine, camera);
+                        }
+                    }
+                }
+                else if (GlobalInfo.Instance.nowPanel == NowPanel.Six)
+                {
+                    Grid gdsix = GlobalInfo.Instance.sixGdList.Where(w => w.Tag.ToString() == tag.ToString()).FirstOrDefault();
+                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == tag).FirstOrDefault();
+                    if (gdsix != null && camera != null)
+                    {
+                        if (camera.Info.IsPlay)
+                        {
+                            SixPanel.Instance.StopCamera(gdsix, camera);
+                        }
+                        else
+                        {
+                            SixPanel.Instance.PlaySelectCamera(gdsix, camera);
                         }
                     }
                 }
@@ -1317,6 +1361,17 @@ namespace PlayCamera
         {
             this.MainPanel.Children.Clear();
             this.MainPanel.Children.Add(VideoList.Instance);
+        }
+        /// <summary>
+        /// 选择6画面
+        /// </summary>
+        private void SixImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.MainPanel.Children.Clear();
+            this.MainPanel.Children.Add(SixPanel.Instance);
+            imgFour.Source = new BitmapImage(new Uri("/Images/FourSelect.png", UriKind.Relative));
+            imgNine.Source = new BitmapImage(new Uri("/Images/Nine.png", UriKind.Relative));
+            GlobalInfo.Instance.nowPanel = NowPanel.Six;
         }
     }
 

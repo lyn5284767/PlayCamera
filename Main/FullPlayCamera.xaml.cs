@@ -67,6 +67,7 @@ namespace PlayCamera
             try
             {
                 GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
                 GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
                 ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == camId).FirstOrDefault();
                 camera.StopCamera();
@@ -132,6 +133,7 @@ namespace PlayCamera
             try
             {
                 GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
+                GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
                 GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
                 camera.StopCamera();
                 bool isPlay = camera.InitCamera(camera.Info);

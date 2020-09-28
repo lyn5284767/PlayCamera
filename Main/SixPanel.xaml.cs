@@ -1,5 +1,6 @@
 ﻿using HBGKTest;
 using HBGKTest.YiTongCamera;
+using PlayCamera;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,17 +16,17 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PlayCamera
+namespace Main
 {
     /// <summary>
-    /// FourPanel.xaml 的交互逻辑
+    /// SixPanel.xaml 的交互逻辑
     /// </summary>
-    public partial class NinePanel : UserControl
+    public partial class SixPanel : UserControl
     {
-        private static NinePanel _instance = null;
+        private static SixPanel _instance = null;
         private static readonly object syncRoot = new object();
 
-        public static NinePanel Instance
+        public static SixPanel Instance
         {
             get
             {
@@ -35,22 +36,23 @@ namespace PlayCamera
                     {
                         if (_instance == null)
                         {
-                            _instance = new NinePanel();
+                            _instance = new SixPanel();
                         }
                     }
                 }
                 return _instance;
             }
         }
-        public NinePanel()
+        public SixPanel()
         {
             InitializeComponent();
-            this.Loaded += FourPanel_Loaded;
+            this.Loaded += SixPanel_Loaded;
         }
+
 
         bool FirstLoad = false;
 
-        private void FourPanel_Loaded(object sender, RoutedEventArgs e)
+        private void SixPanel_Loaded(object sender, RoutedEventArgs e)
         {
             FirstLoad = true;
             PlayCameraInThread();
@@ -73,14 +75,14 @@ namespace PlayCamera
         public void PlayCamera()
         {
             camList.Clear();
-            for (int i = 0; i < GlobalInfo.Instance.nineGdList.Count; i++) // 获取播放面板绑定得摄像头
+            for (int i = 0; i < GlobalInfo.Instance.sixGdList.Count; i++) // 获取播放面板绑定得摄像头
             {
-                var data = GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.nineGdList[i] });
+                var data = GlobalInfo.Instance.sixGdList[i].Dispatcher.Invoke(new GetPlayCamList(GetPlayCamera), new object[] { GlobalInfo.Instance.sixGdList[i] });
             }
-            GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
             GlobalInfo.Instance.nineGdList.ForEach(o => o.Children.Clear());
-            GlobalInfo.Instance.nineGdList.ForEach(o => o.Tag = null);
+            GlobalInfo.Instance.sixGdList.ForEach(o => o.Children.Clear());
+            GlobalInfo.Instance.fourGdList.ForEach(o => o.Children.Clear());
+            GlobalInfo.Instance.sixGdList.ForEach(o => o.Tag = null);
             if (camList.Count == 0) // 如果没有半丁摄像头则获取第一组摄像头
             {
                 Node node = GlobalInfo.Instance.CamList[0].Nodes.FirstOrDefault();
@@ -90,18 +92,18 @@ namespace PlayCamera
                     camList = GlobalInfo.Instance.CameraList.Where(w => w.Info.CamGroup == groupID).ToList();
                 }
             }
-            for (int i = 0; i < GlobalInfo.Instance.nineGdList.Count; i++)
+            for (int i = 0; i < GlobalInfo.Instance.sixGdList.Count; i++)
             {
                 if (camList.Count > i)
                 {
-                    GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], camList[i] });
+                    GlobalInfo.Instance.sixGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.sixGdList[i], camList[i] });
                 }
-                else
-                {
-                    GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], null });
-                }
+                //else
+                //{
+                //    GlobalInfo.Instance.sixGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.sixGdList[i], null });
+                //}
             }
-            
+
             //this.ninegridCamera1.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera1, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 1).FirstOrDefault() });
             //this.ninegridCamera2.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera2, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 2).FirstOrDefault() });
             //this.ninegridCamera3.Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { this.ninegridCamera3, GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == 3).FirstOrDefault() });
@@ -267,7 +269,7 @@ namespace PlayCamera
             }
         }
 
-        
+
         /// <summary>
         /// 获取Border中的Grid
         /// </summary>
@@ -342,7 +344,7 @@ namespace PlayCamera
                     bd.BorderBrush = (Brush)bc.ConvertFrom("#686868");
                 }
                 border.BorderBrush = (Brush)bc.ConvertFrom("#002DFF");
-                if (SelectCameraEvent != null && border.Tag!=null)
+                if (SelectCameraEvent != null && border.Tag != null)
                 {
                     SelectCameraEvent(int.Parse(border.Tag.ToString()));
                 }

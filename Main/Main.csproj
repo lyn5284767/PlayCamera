@@ -155,6 +155,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SixPanel.xaml.cs">
+      <DependentUpon>SixPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SQLiteFac.cs" />
     <Compile Include="VideoList.xaml.cs">
       <DependentUpon>VideoList.xaml</DependentUpon>
@@ -194,6 +197,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PlayVideoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SixPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

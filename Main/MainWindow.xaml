@@ -124,6 +124,9 @@
                         <Grid Name="gdFour" Margin="10,0,10,0">
                             <Image Name="imgFour" Source="/Images/FourSelect.png" MouseLeftButtonDown="FourImage_MouseLeftButtonDown"/>
                         </Grid>
+                        <Grid Name="gdSix" Margin="10,0,10,0">
+                            <Image Name="imgSix" Source="/Images/FourSelect.png" MouseLeftButtonDown="SixImage_MouseLeftButtonDown"/>
+                        </Grid>
                         <Grid Name="gdNine" Margin="10,0,10,0">
                             <Image Name="imgNine" Source="/Images/Nine.png" MouseLeftButtonDown="NineImage_MouseLeftButtonDown"/>
                         </Grid>

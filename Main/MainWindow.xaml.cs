@@ -639,6 +639,15 @@ namespace PlayCamera
         /// </summary>
         private void ExitImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            foreach (ICameraFactory camera in GlobalInfo.Instance.CameraList)
+            {
+                string mainPath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.CameraName;
+                string secondPath = "\\" + DateTime.Now.Year + "年\\" + DateTime.Now.Month + "月\\" + DateTime.Now.ToString("yyyy-MM-dd");
+                string filePath = mainPath + secondPath;
+                string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
+                camera.StopFile();
+                camera.SaveFile(filePath, fileName);
+            }
             MessageBoxResult result = System.Windows.MessageBox.Show("确认退出？", "提示", MessageBoxButton.OKCancel);
             if(result == MessageBoxResult.OK) this.Close();
         }
@@ -1257,27 +1266,96 @@ namespace PlayCamera
         {
             if (e.ClickCount == 2)
             {
-                if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
+                if (GlobalInfo.Instance.nowPanel == NowPanel.Four) // 4画面
                 {
-                    if (GlobalInfo.Instance.SelectGrid != null && GlobalInfo.Instance.SelectNode != null)
+                    if (GlobalInfo.Instance.SelectNode != null) // 选择摄像头不为空
                     {
-                        CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
-                        ICameraFactory camera =  GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
-                        if (camera != null)
+                        if (GlobalInfo.Instance.SelectGrid != null) // 选择了指定画面
                         {
-                            FourPanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                            CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                            ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                            if (camera != null)
+                            {
+                                FourPanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                            }
+                        }
+                        else // 未选择
+                        {
+                            foreach (Grid gd in GlobalInfo.Instance.fourGdList)
+                            {
+                                if (gd.Children.Count > 0 && gd.Children[0].GetType().Name != "UIControl_HBGK1" && gd.Children[0].GetType().Name != "YiTongCameraControl")
+                                {
+                                    CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                                    if (camera != null)
+                                    {
+                                        FourPanel.Instance.PlaySelectCamera(gd, camera);
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
                 else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
                 {
-                    if (GlobalInfo.Instance.SelectGrid != null && GlobalInfo.Instance.SelectNode != null)
+                    if (GlobalInfo.Instance.SelectNode != null)
                     {
-                        CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                        if (GlobalInfo.Instance.SelectGrid != null) // 选择了指定画面
+                        {
+                            CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
                         ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
                         if (camera != null)
                         {
                             NinePanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                        }
+                        }
+                        else // 未选择
+                        {
+                            foreach (Grid gd in GlobalInfo.Instance.nineGdList)
+                            {
+                                if (gd.Children.Count > 0 && gd.Children[0].GetType().Name != "UIControl_HBGK1" && gd.Children[0].GetType().Name != "YiTongCameraControl")
+                                {
+                                    CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                                    if (camera != null)
+                                    {
+                                        NinePanel.Instance.PlaySelectCamera(gd, camera);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else if(GlobalInfo.Instance.nowPanel == NowPanel.Six)
+                {
+                    if (GlobalInfo.Instance.SelectNode != null)
+                    {
+                        if (GlobalInfo.Instance.SelectGrid != null) // 选择了指定画面
+                        {
+                            CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                            ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                            if (camera != null)
+                            {
+                                SixPanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                            }
+                        }
+                        else // 未选择
+                        {
+                            foreach (Grid gd in GlobalInfo.Instance.sixGdList)
+                            {
+                                if (gd.Children.Count > 0 && gd.Children[0].GetType().Name != "UIControl_HBGK1" && gd.Children[0].GetType().Name != "YiTongCameraControl")
+                                {
+                                    CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                                    if (camera != null)
+                                    {
+                                        SixPanel.Instance.PlaySelectCamera(gd, camera);
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

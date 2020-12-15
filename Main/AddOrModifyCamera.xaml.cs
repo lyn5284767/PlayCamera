@@ -160,16 +160,28 @@ namespace Main
                     this.tbCameraPort.Text = "554";
                     this.tbCameraUser.Text = "admin";
                     this.tbCameraPwd.Text = "123456";
-                    this.tbPlayPort.Text = "1";
-                    this.tbPlayPort.Text = (GlobalInfo.Instance.CameraList.Max(m => m.Info.nPlayPort) +1).ToString();
+                    if (GlobalInfo.Instance.CameraList.Count > 0)
+                    {
+                        this.tbPlayPort.Text = (GlobalInfo.Instance.CameraList.Max(m => m.Info.nPlayPort) + 1).ToString();
+                    }
+                    else
+                    {
+                        this.tbPlayPort.Text = "1";
+                    }
                 }
                 else if (cb.SelectedIndex == 1)
                 {
                     this.tbCameraPort.Text = "34567";
                     this.tbCameraUser.Text = "admin";
                     this.tbCameraPwd.Text = "";
-                    this.tbPlayPort.Text = "1";
-                    this.tbPlayPort.Text = (GlobalInfo.Instance.CameraList.Max(m => m.Info.nPlayPort) + 1).ToString();
+                    if (GlobalInfo.Instance.CameraList.Count > 0)
+                    {
+                        this.tbPlayPort.Text = (GlobalInfo.Instance.CameraList.Max(m => m.Info.nPlayPort) + 1).ToString();
+                    }
+                    else
+                    {
+                        this.tbPlayPort.Text = "1";
+                    }
                 }
             }
         }

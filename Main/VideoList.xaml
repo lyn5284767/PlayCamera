@@ -24,11 +24,13 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" Grid.Column="0">
                             <TextBlock Text="开始时间:" Width="90" FontSize="20" VerticalAlignment="Center"></TextBlock>
-                            <hc:DateTimePicker Name="beginTime" Grid.Column="1" Height="40" Width="180"/>
+                            <!--<hc:DateTimePicker Name="beginTime" Grid.Column="1" Height="40" Width="180"/>-->
+                            <hc:DatePicker Name="beginTime" FontSize="20" Grid.Column="1" Height="40" Width="150"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2">
                             <TextBlock Text="结束时间:" Width="90" FontSize="20" VerticalAlignment="Center"></TextBlock>
-                            <hc:DateTimePicker Name="endTime" Grid.Column="2" Height="40" Width="180"/>
+                            <!--<hc:DateTimePicker Name="endTime" Grid.Column="2" Height="40" Width="180"/>-->
+                            <hc:DatePicker Name="endTime" FontSize="20" Grid.Column="2" Height="40" Width="150"/>
                         </StackPanel>
                         <Button Click="Button_MouseDown" Grid.Column="2" Width="100" FontSize="20" Height="40" Margin="26,5,25,5">查询</Button>
                     </Grid>

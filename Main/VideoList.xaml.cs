@@ -50,8 +50,10 @@ namespace Main
 
         private void VideoList_Loaded(object sender, RoutedEventArgs e)
         {
-            this.beginTime.SelectedDateTime = DateTime.Now.AddDays(-1);
-            this.endTime.SelectedDateTime = DateTime.Now.AddDays(1);
+            //this.beginTime.SelectedDateTime = DateTime.Now.AddDays(-1);
+            //this.endTime.SelectedDateTime = DateTime.Now.AddDays(1);
+            this.beginTime.SelectedDate = DateTime.Now.AddDays(-1);
+            this.endTime.SelectedDate = DateTime.Now.AddDays(1);
         }
         List<DirectoryInfo> dirList = new List<DirectoryInfo>();
         private void Button_MouseDown(object sender, RoutedEventArgs e)
@@ -67,8 +69,8 @@ namespace Main
                 MessageBox.Show("未查询到录像");
                 return;
             }
-            DateTime bTime = this.beginTime.DisplayDateTime;
-            DateTime eTime = this.endTime.DisplayDateTime;
+            DateTime bTime = this.beginTime.SelectedDate.Value;
+            DateTime eTime = this.endTime.SelectedDate.Value;
             if (eTime <= bTime)
             {
                 MessageBox.Show("结束时间必须大于开始时间");

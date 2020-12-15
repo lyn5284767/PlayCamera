@@ -1259,25 +1259,96 @@ namespace PlayCamera
             {
                 if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
                 {
-                    if (GlobalInfo.Instance.SelectGrid != null && GlobalInfo.Instance.SelectNode != null)
+                    if (GlobalInfo.Instance.SelectNode != null)
                     {
-                        CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
-                        ICameraFactory camera =  GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
-                        if (camera != null)
+                        if (GlobalInfo.Instance.SelectGrid != null)
                         {
-                            FourPanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                            CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                            ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                            if (camera != null)
+                            {
+                                FourPanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                            }
+                        }
+                        else
+                        {
+                            foreach (Grid gd in GlobalInfo.Instance.fourGdList)
+                            {
+                                if (gd.Children.Count > 0 && gd.Children[0].GetType().Name != "UIControl_HBGK1" && gd.Children[0].GetType().Name != "YiTongCameraControl")
+                                {
+                                    CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                                    if (camera != null)
+                                    {
+                                        FourPanel.Instance.PlaySelectCamera(gd, camera);
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
                 else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
                 {
-                    if (GlobalInfo.Instance.SelectGrid != null && GlobalInfo.Instance.SelectNode != null)
+                    if (GlobalInfo.Instance.SelectNode != null)
                     {
-                        CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
-                        ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
-                        if (camera != null)
+                        if (GlobalInfo.Instance.SelectGrid != null)
                         {
-                            NinePanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                            CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                            ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                            if (camera != null)
+                            {
+                                NinePanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                            }
+                        }
+                        else
+                        {
+                            foreach (Grid gd in GlobalInfo.Instance.nineGdList)
+                            {
+                                if (gd.Children.Count > 0 && gd.Children[0].GetType().Name != "UIControl_HBGK1" && gd.Children[0].GetType().Name != "YiTongCameraControl")
+                                {
+                                    CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                                    if (camera != null)
+                                    {
+                                        NinePanel.Instance.PlaySelectCamera(gd, camera);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+                else if (GlobalInfo.Instance.nowPanel == NowPanel.Six)
+                {
+                    if (GlobalInfo.Instance.SelectNode != null)
+                    {
+                        if (GlobalInfo.Instance.SelectGrid != null)
+                        {
+                            CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                            ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                            if (camera != null)
+                            {
+                                NinePanel.Instance.PlaySelectCamera(GlobalInfo.Instance.SelectGrid, camera);
+                            }
+                        }
+                        else
+                        {
+                            foreach (Grid gd in GlobalInfo.Instance.sixGdList)
+                            {
+                                if (gd.Children.Count > 0 && gd.Children[0].GetType().Name != "UIControl_HBGK1" && gd.Children[0].GetType().Name != "YiTongCameraControl")
+                                {
+                                    CameraInfo info = GlobalInfo.Instance.SelectNode.Tag as CameraInfo;
+                                    ICameraFactory camera = GlobalInfo.Instance.CameraList.Where(w => w.Info.ID == info.Id).FirstOrDefault();
+                                    if (camera != null)
+                                    {
+                                        SixPanel.Instance.PlaySelectCamera(gd, camera);
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

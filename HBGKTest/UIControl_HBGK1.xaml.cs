@@ -200,7 +200,7 @@ namespace HBGKTest
                     Directory.CreateDirectory(filePath);
                 }
                 //startRecord = NETSDKDLL.IP_NET_DVR_StartRecord(m_realPlay, saveFileFullPath.Substring(0, saveFileFullPath.Length - 4) + ".avi", 1800, 1800);
-                startRecord = NETSDKDLL.IP_NET_DVR_StartRecord(m_realPlay, saveFileFullPath, 100, 1800);
+                startRecord = NETSDKDLL.IP_NET_DVR_StartRecord(m_realPlay, saveFileFullPath, 300, 1800);
                 //ILog.WriteEventLog("startRecord:" + startRecord);
 
                 newFileName = Path.GetDirectoryName(saveFileFullPath);

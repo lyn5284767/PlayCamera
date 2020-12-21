@@ -81,17 +81,39 @@ namespace Main
             List<VideoInfo> list = new List<VideoInfo>();
             foreach (DirectoryInfo dir in dirList)
             {
-                string[] files = Directory.GetFiles(dir.FullName, "*.avi");
-                for (int i = 0; i < files.Count(); i++)
+                string[] files;
+                if ((GlobalInfo.Instance.SelectNode.Tag as CameraInfo).CAMERATYPE == 1)
                 {
-                    VideoInfo info = new VideoInfo();
-                    info.ID = i;
-                    string time = files[i].Substring(files[i].Length - 18, 14);
-                    info.SaveTime = DateTime.ParseExact(time, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
-                    info.ShowTime = info.SaveTime.ToString();
-                    info.FileName = files[i].Substring(files[i].Length - 18, 18);
-                    info.FullPath = dir.FullName;
-                    list.Add(info);
+                    files = Directory.GetFiles(dir.FullName, "*.h264");
+                    for (int i = 0; i < files.Count(); i++)
+                    {
+                        VideoInfo info = new VideoInfo();
+                        info.ID = i;
+                        string time = files[i].Substring(files[i].Length - 19, 14);
+                        info.SaveTime = DateTime.ParseExact(time, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
+                        info.ShowTime = info.SaveTime.ToString();
+                        info.FileName = files[i].Substring(files[i].Length - 19, 19);
+                        info.FullPath = dir.FullName;
+                        info.CameraType = 1;
+                        list.Add(info);
+                    }
+                }
+                else
+                {
+                    files = Directory.GetFiles(dir.FullName, "*.avi");
+
+                    for (int i = 0; i < files.Count(); i++)
+                    {
+                        VideoInfo info = new VideoInfo();
+                        info.ID = i;
+                        string time = files[i].Substring(files[i].Length - 18, 14);
+                        info.SaveTime = DateTime.ParseExact(time, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
+                        info.ShowTime = info.SaveTime.ToString();
+                        info.FileName = files[i].Substring(files[i].Length - 18, 18);
+                        info.FullPath = dir.FullName;
+                        info.CameraType = 0;
+                        list.Add(info);
+                    }
                 }
             }
             list = list.Where(w => w.SaveTime > bTime & w.SaveTime < eTime).OrderBy(o => o.SaveTime).ToList();
@@ -128,8 +150,16 @@ namespace Main
             if (info != null)
             {
                 string file = info.FullPath + "\\" + info.FileName;
-                PlayVideoWindow window = new PlayVideoWindow(file);
-                window.ShowDialog();
+                if (info.CameraType == 0)
+                {
+                    PlayVideoWindow window = new PlayVideoWindow(file);
+                    window.ShowDialog();
+                }
+                else
+                {
+                    HBGKTest.YiTongCamera.PlayBackForm playBackForm = new HBGKTest.YiTongCamera.PlayBackForm(file);
+                    playBackForm.ShowDialog();
+                }
             }
         }
 

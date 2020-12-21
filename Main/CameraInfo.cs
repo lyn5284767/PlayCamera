@@ -96,6 +96,10 @@ namespace PlayCamera
         /// 录像路径
         /// </summary>
         public string FullPath { get; set; }
+        /// <summary>
+        /// 摄像头类型 0-宏英；1-一通
+        /// </summary>
+        public int CameraType { get; set; }
     }
 
     public class DirLink

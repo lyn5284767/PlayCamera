@@ -219,7 +219,7 @@ namespace HBGKTest
                 int stopRecord = 0;
                 string result = "";
                 stopRecord = NETSDKDLL.IP_NET_DVR_StopRecord(m_realPlay);
-                Thread.Sleep(500);
+                Thread.Sleep(200);
                 //ILog.WriteEventLog(("源文件：" + saveFileFullPath + ",目标文件：" + newFileName));
 
                 if (stopRecord>0)

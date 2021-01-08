@@ -639,17 +639,20 @@ namespace PlayCamera
         /// </summary>
         private void ExitImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            foreach (ICameraFactory camera in GlobalInfo.Instance.CameraList)
-            {
-                string mainPath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.CameraName;
-                string secondPath = "\\" + DateTime.Now.Year + "年\\" + DateTime.Now.Month + "月\\" + DateTime.Now.ToString("yyyy-MM-dd");
-                string filePath = mainPath + secondPath;
-                string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
-                camera.StopFile();
-                camera.SaveFile(filePath, fileName);
-            }
             MessageBoxResult result = System.Windows.MessageBox.Show("确认退出？", "提示", MessageBoxButton.OKCancel);
-            if(result == MessageBoxResult.OK) this.Close();
+            if (result == MessageBoxResult.OK)
+            {
+                this.Close();
+                foreach (ICameraFactory camera in GlobalInfo.Instance.CameraList)
+                {
+                    string mainPath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.CameraName;
+                    string secondPath = "\\" + DateTime.Now.Year + "年\\" + DateTime.Now.Month + "月\\" + DateTime.Now.ToString("yyyy-MM-dd");
+                    string filePath = mainPath + secondPath;
+                    string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
+                    camera.StopFile();
+                    camera.SaveFile(filePath, fileName);
+                }
+            }
         }
         /// <summary>
         /// 全屏

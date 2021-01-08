@@ -322,7 +322,7 @@ namespace HBGKTest.YiTongCamera
                     dir.Create();
                 }
 
-                if (NetSDK.H264_DVR_StartLocalRecord(m_iPlayhandle, filePath + "/"+fileName, (int)MEDIA_FILE_TYPE.MEDIA_FILE_AVI))
+                if (NetSDK.H264_DVR_StartLocalRecord(m_iPlayhandle, filePath + "/" + fileName, (int)MEDIA_FILE_TYPE.MEDIA_FILE_NONE))
                 {
                     m_bRecord = true;
                 }

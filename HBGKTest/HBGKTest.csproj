@@ -44,6 +44,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\Main\bin\x86\Release\</OutputPath>
@@ -55,7 +56,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AnalysisServices.AdomdClient, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.AnalysisServices.SPClient.Interfaces, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -92,6 +96,12 @@
       <DependentUpon>UIControl_HBGK1.xaml</DependentUpon>
     </Compile>
     <Compile Include="YiTongCamera\NetSDK.cs" />
+    <Compile Include="YiTongCamera\PlayBackForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="YiTongCamera\PlayBackForm.Designer.cs">
+      <DependentUpon>PlayBackForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="YiTongCamera\VideoForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -146,6 +156,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="UIControl_HBGK.resx" />
+    <EmbeddedResource Include="YiTongCamera\PlayBackForm.resx">
+      <DependentUpon>PlayBackForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="YiTongCamera\VideoForm.resx" />
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

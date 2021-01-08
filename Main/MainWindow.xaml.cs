@@ -456,7 +456,7 @@ namespace PlayCamera
         /// </summary>
         private void CameraSaveThreadTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (cameraSaveThreadTimer.Interval == 1) cameraSaveThreadTimer.Interval = 5 * 60 * 1000;
+            if (cameraSaveThreadTimer.Interval == 1) cameraSaveThreadTimer.Interval = 1 * 60 * 1000;
             try
             {
                 foreach (ICameraFactory camera in GlobalInfo.Instance.CameraList)
@@ -464,7 +464,15 @@ namespace PlayCamera
                     string mainPath = System.Environment.CurrentDirectory + "\\video" + "\\video" + camera.Info.CameraName;
                     string secondPath = "\\" + DateTime.Now.Year + "年\\" + DateTime.Now.Month + "月\\" + DateTime.Now.ToString("yyyy-MM-dd");
                     string filePath = mainPath + secondPath;
-                    string fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
+                    string fileName = string.Empty;
+                    if (camera.GetType().Name == "UIControl_HBGK1")
+                    {
+                        fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".avi";
+                    }
+                    else if (camera.GetType().Name == "YiTongCameraControl")
+                    {
+                        fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + ".h264";
+                    }
                     camera.StopFile();
                     camera.SaveFile(filePath, fileName);
                 }

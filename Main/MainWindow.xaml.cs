@@ -49,11 +49,11 @@ namespace PlayCamera
         /// 根据UDP传输数据得播放摄像头回调
         /// </summary>
         /// <param name="camIP">摄像头IP</param>
-        private void Con_GetPlayCameraEvent(string camIP)
+        private void Con_GetPlayCameraEvent(List<string> camIP)
         {
             try
             {
-                Action<String> playFullScreenAct = new Action<string>(PlayFullScreen);
+                Action<List<string>> playFullScreenAct = new Action<List<string>>(PlayFullScreen);
                 this.Dispatcher.BeginInvoke(playFullScreenAct, camIP);
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace PlayCamera
         /// 全屏播放
         /// </summary>
         /// <param name="camIP">摄像头IP</param>
-        private void PlayFullScreen(string camIP)
+        private void PlayFullScreen(List<string> camIPs)
         {
             this.gdMain.Visibility = Visibility.Collapsed;
 
@@ -80,14 +80,23 @@ namespace PlayCamera
             }
             FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
             FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
-            ICameraFactory cam = GlobalInfo.Instance.CameraList.Where(w => w.Info.RemoteIP == camIP).FirstOrDefault();
-            if (cam != null)
+            List<ICameraFactory> camList = new List<ICameraFactory>();
+            foreach (string ip in camIPs)
             {
-                FullPlayCamera.Instance.PlayCameraFromUdp(cam);
+                ICameraFactory cam = GlobalInfo.Instance.CameraList.Where(w => w.Info.RemoteIP == ip).FirstOrDefault();
+                if (cam != null)
+                {
+                    camList.Add(cam);
+                }
+            }
+            //ICameraFactory cam = GlobalInfo.Instance.CameraList.Where(w => w.Info.RemoteIP == camIP).FirstOrDefault();
+            if (camList.Count>0)
+            {
+                FullPlayCamera.Instance.PlayCameraFromUdp(camList);
             }
             else
             {
-                System.Windows.MessageBox.Show("未配置" + camIP + "摄像头");
+                System.Windows.MessageBox.Show("未配置摄像头");
             }
         }
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -157,6 +166,11 @@ namespace PlayCamera
                         case 1:
                             {
                                 GlobalInfo.Instance.CameraList.Add(new YiTongCameraControl(clInfo));
+                                break;
+                            }
+                        case 2:
+                            {
+                                GlobalInfo.Instance.CameraList.Add(new RTSPControl(clInfo));
                                 break;
                             }
                     }
@@ -1127,6 +1141,11 @@ namespace PlayCamera
                         GlobalInfo.Instance.CameraList.Add(new YiTongCameraControl(chInfo));
                         break;
                     }
+                case 2:
+                    {
+                        GlobalInfo.Instance.CameraList.Add(new RTSPControl(chInfo));
+                        break;
+                    }
             }
             this.tvCamera.ItemsSource = null;
             this.tvCamera.ItemsSource = GlobalInfo.Instance.CamList;
@@ -1196,6 +1215,11 @@ namespace PlayCamera
                 case 1:
                     {
                         GlobalInfo.Instance.CameraList.Add(new YiTongCameraControl(chInfo));
+                        break;
+                    }
+                case 2:
+                    {
+                        GlobalInfo.Instance.CameraList.Add(new RTSPControl(chInfo));
                         break;
                     }
             }

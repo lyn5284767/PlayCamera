@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -171,6 +172,10 @@ namespace PlayCamera
                         {
                             gridCamera.Children.Add(camera as YiTongCameraControl);
                         }
+                        else if (camera is RTSPControl)
+                        {
+                            gridCamera.Children.Add(camera as RTSPControl);
+                        }
                         camera.SetSize(this.bdOne.ActualHeight, this.bdOne.ActualWidth);
                         camera.FullScreenEvent -= Camera_FullScreenEvent;
                         camera.SelectCameraEvent -= Camera_SelectCameraEvent;
@@ -188,6 +193,7 @@ namespace PlayCamera
                     }
                     else
                     {
+                        gridCamera.Children.Clear();
                         camera.Info.IsPlay = false;
                         gridCamera.Children.Add(cameraInitImage);
                     }
@@ -198,12 +204,14 @@ namespace PlayCamera
                 }
                 else
                 {
+                    gridCamera.Children.Clear();
                     gridCamera.Children.Add(cameraInitImage);
                 }
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show("摄像头已经在其他窗口播放");
+                gridCamera.Children.Clear();
                 gridCamera.Children.Add(cameraInitImage);
             }
             //try
@@ -295,6 +303,7 @@ namespace PlayCamera
             }
             else
             {
+                gridCamera.Children.Clear();
                 camera.Info.IsPlay = false;
                 gridCamera.Children.Add(cameraInitImage);
             }
@@ -346,6 +355,7 @@ namespace PlayCamera
                 }
                 else
                 {
+                    gridCamera.Children.Clear();
                     gridCamera.Children.Add(cameraInitImage);
                 }
                 if (IsCameraPlayEvent != null)
@@ -465,9 +475,28 @@ namespace PlayCamera
                     {
                         System.Windows.MessageBox.Show("未检测到播放摄像头");
                     }
+                    else if (border.Tag is UIControl_HBGK1)
+                    {
+                        int camID = (border.Tag as UIControl_HBGK1).Info.ID;
+                        FullScreenEvent(camID);
+                    }
+                    else if (border.Tag is YiTongCameraControl)
+                    {
+                        int camID = (border.Tag as YiTongCameraControl).Info.ID;
+                        FullScreenEvent(camID);
+                    }
+                    else if (border.Tag is RTSPControl)
+                    {
+                        int camID = (border.Tag as RTSPControl).Info.ID;
+                        FullScreenEvent(camID);
+                    }
                     else
                     {
-                        FullScreenEvent(int.Parse(border.Tag.ToString()));
+                        Regex regexParameterConfigurationConfirm = new Regex(@"^[0-9]+$");
+                        if ((regexParameterConfigurationConfirm.Match(border.Tag.ToString())).Success)
+                        {
+                            FullScreenEvent(int.Parse(border.Tag.ToString()));
+                        }
                     }
                 }
             }

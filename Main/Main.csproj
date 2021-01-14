@@ -154,6 +154,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RTSPControl.xaml.cs">
+      <DependentUpon>RTSPControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SixPanel.xaml.cs">
       <DependentUpon>SixPanel.xaml</DependentUpon>
     </Compile>
@@ -198,6 +201,10 @@
     <Page Include="PlayVideoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="RTSPControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SixPanel.xaml">
       <SubType>Designer</SubType>

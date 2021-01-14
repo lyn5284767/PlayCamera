@@ -150,7 +150,7 @@ namespace HBGKTest
         }
 
         /// <summary>
-        /// 摄像头类型 0-宏英  ;1-一通
+        /// 摄像头类型 0-宏英  ;1-一通; 3-rtsp流
         /// </summary>
         public int CameraType { get; set; }
         /// <summary>

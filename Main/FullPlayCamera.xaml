@@ -14,10 +14,42 @@
         <Border Grid.Row="0" BorderBrush="#686868" BorderThickness="1">
             <Viewbox x:Name="viewboxCameral" Stretch="Uniform">
                 <Grid x:Name="gridCamera">
-                    <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
+                    <Image Source="/Images/camera.jpg"/>
                 </Grid>
             </Viewbox>
         </Border>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Viewbox x:Name="viewboxCamera2" Stretch="Uniform" Grid.Column="2" Grid.Row="2" Visibility="Collapsed">
+                <Grid x:Name="gridCamera2">
+                    <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
+                </Grid>
+            </Viewbox>
+            <Viewbox x:Name="viewboxCamera3" Stretch="Uniform" Grid.Column="0" Grid.Row="2" Visibility="Collapsed">
+                <Grid x:Name="gridCamera3">
+                    <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
+                </Grid>
+            </Viewbox>
+            <Viewbox x:Name="viewboxCamera4" Stretch="Uniform" Grid.Column="2" Grid.Row="0" Visibility="Collapsed">
+                <Grid x:Name="gridCamera4">
+                    <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
+                </Grid>
+            </Viewbox>
+            <Viewbox x:Name="viewboxCamera5" Stretch="Uniform" Grid.Column="0" Grid.Row="0" Visibility="Collapsed">
+                <Grid x:Name="gridCamera5">
+                    <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
+                </Grid>
+            </Viewbox>
+        </Grid>
         <Border Grid.Row="1" BorderBrush="#686868" BorderThickness="1,1,0,0">
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <Image Source="/Images/FullScreen.png" Margin="20,0,0,0" MouseLeftButtonDown="CancelFullImage_MouseLeftButtonDown"/>

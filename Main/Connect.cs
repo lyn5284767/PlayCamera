@@ -13,7 +13,7 @@ using System.Windows.Forms;
 namespace PlayCamera
 {
     public delegate void  GetRcvBuffer(DataForm dt);
-    public delegate void GetPlayCamera(string camIP);
+    public delegate void GetPlayCamera(List<string> camIP);
 
     public interface IConnect
     {
@@ -306,7 +306,8 @@ namespace PlayCamera
                         {
                             if (GetPlayCameraEvent != null)
                             {
-                                GetPlayCameraEvent(model.Content);
+                                string[] camList = model.Content.Split(';');
+                                GetPlayCameraEvent(camList.ToList());
                             }
                         }
                         else

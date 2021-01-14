@@ -101,41 +101,75 @@ namespace Main
         /// </summary>
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            if (this.tbCameraIP.Text == string.Empty || this.tbCameraPort.Text == string.Empty || this.tbCameraUser.Text == string.Empty
-               || this.tbCameraName.Text == string.Empty)
+            if (cbCameraType.SelectedIndex == 0 || cbCameraType.SelectedIndex == 1)
             {
-                MessageBox.Show("摄像头信息填写不完整，请重新填写");
-                return;
-            }
-            if (this.Title == "添加摄像头")
-            {
-                CameraInfo info = new CameraInfo();
-                info.REMOTEIP = this.tbCameraIP.Text;
-                info.REMOTEPORT = int.Parse(this.tbCameraPort.Text);
-                info.REMOTEUSER = this.tbCameraUser.Text;
-                info.REMOTEPWD = this.tbCameraPwd.Text;
-                info.CAMERATYPE= this.cbCameraType.SelectedIndex;
-                info.CAMERANAME = this.tbCameraName.Text;
-                info.NPLAYPORT = int.Parse(this.tbPlayPort.Text);
-                info.CamGroup = this.GroupID;
-                if (AddCameraEvent != null)
+                if (this.tbCameraIP.Text == string.Empty || this.tbCameraPort.Text == string.Empty || this.tbCameraUser.Text == string.Empty
+                   || this.tbCameraName.Text == string.Empty)
                 {
-                    AddCameraEvent(info);
+                    MessageBox.Show("摄像头信息填写不完整，请重新填写");
+                    return;
+                }
+                if (this.Title == "添加摄像头")
+                {
+                    CameraInfo info = new CameraInfo();
+                    info.REMOTEIP = this.tbCameraIP.Text;
+                    info.REMOTEPORT = int.Parse(this.tbCameraPort.Text);
+                    info.REMOTEUSER = this.tbCameraUser.Text;
+                    info.REMOTEPWD = this.tbCameraPwd.Text;
+                    info.CAMERATYPE = this.cbCameraType.SelectedIndex;
+                    info.CAMERANAME = this.tbCameraName.Text;
+                    info.NPLAYPORT = int.Parse(this.tbPlayPort.Text);
+                    info.CamGroup = this.GroupID;
+                    if (AddCameraEvent != null)
+                    {
+                        AddCameraEvent(info);
+                    }
+                }
+                else
+                {
+                    this.CameraInfo.REMOTEIP = this.tbCameraIP.Text;
+                    this.CameraInfo.REMOTEPORT = int.Parse(this.tbCameraPort.Text);
+                    this.CameraInfo.REMOTEUSER = this.tbCameraUser.Text;
+                    this.CameraInfo.REMOTEPWD = this.tbCameraPwd.Text;
+                    this.CameraInfo.CAMERATYPE = this.cbCameraType.SelectedIndex;
+                    this.CameraInfo.CAMERANAME = this.tbCameraName.Text;
+                    this.CameraInfo.CamGroup = this.GroupID;
+                    this.CameraInfo.NPLAYPORT = int.Parse(this.tbPlayPort.Text);
+                    if (ModifyCameraEvent != null)
+                    {
+                        ModifyCameraEvent(this.CameraInfo);
+                    }
                 }
             }
-            else
+            else if (cbCameraType.SelectedIndex == 2)
             {
-                this.CameraInfo.REMOTEIP = this.tbCameraIP.Text;
-                this.CameraInfo.REMOTEPORT = int.Parse(this.tbCameraPort.Text);
-                this.CameraInfo.REMOTEUSER = this.tbCameraUser.Text;
-                this.CameraInfo.REMOTEPWD = this.tbCameraPwd.Text;
-                this.CameraInfo.CAMERATYPE = this.cbCameraType.SelectedIndex;
-                this.CameraInfo.CAMERANAME = this.tbCameraName.Text;
-                this.CameraInfo.CamGroup = this.GroupID;
-                this.CameraInfo.NPLAYPORT = int.Parse(this.tbPlayPort.Text);
-                if (ModifyCameraEvent != null)
+                if (this.tbCameraIP.Text == string.Empty || this.tbCameraName.Text == string.Empty)
                 {
-                    ModifyCameraEvent(this.CameraInfo);
+                    MessageBox.Show("摄像头信息填写不完整，请重新填写");
+                    return;
+                }
+                if (this.Title == "添加摄像头")
+                {
+                    CameraInfo info = new CameraInfo();
+                    info.REMOTEIP = this.tbCameraIP.Text;
+                    info.CamGroup = this.GroupID;
+                    info.CAMERANAME = this.tbCameraName.Text;
+                    info.CAMERATYPE = this.cbCameraType.SelectedIndex;
+                    if (AddCameraEvent != null)
+                    {
+                        AddCameraEvent(info);
+                    }
+                }
+                else
+                {
+                    this.CameraInfo.REMOTEIP = this.tbCameraIP.Text;
+                    this.CameraInfo.CamGroup = this.GroupID;
+                    this.CameraInfo.CAMERANAME = this.tbCameraName.Text;
+                    this.CameraInfo.CAMERATYPE = this.cbCameraType.SelectedIndex;
+                    if (ModifyCameraEvent != null)
+                    {
+                        ModifyCameraEvent(this.CameraInfo);
+                    }
                 }
             }
             this.Close();
@@ -182,6 +216,13 @@ namespace Main
                     {
                         this.tbPlayPort.Text = "1";
                     }
+                }
+                else if (cb.SelectedIndex == 2)
+                {
+                    this.tbCameraPort.Text = "";
+                    this.tbCameraUser.Text = "";
+                    this.tbCameraPwd.Text = "";
+                    this.tbPlayPort.Text = "";
                 }
             }
         }

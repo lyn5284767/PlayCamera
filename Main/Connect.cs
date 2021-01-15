@@ -312,7 +312,7 @@ namespace PlayCamera
                         }
                         else
                         {
-                            MessageBox.Show("解析摄像头字符串错误");
+                            //MessageBox.Show("解析摄像头字符串错误");
                         }
                         //if (recStr == "\u0001")
                         //{

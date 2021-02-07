@@ -186,8 +186,8 @@ namespace Main
         /// <param name="e"></param>
         private void cbCameraType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.NowTitle == "添加摄像头")
-            {
+            //if (this.NowTitle == "添加摄像头")
+            //{
                 ComboBox cb = sender as ComboBox;
                 if (cb.SelectedIndex == 0)
                 {
@@ -224,7 +224,7 @@ namespace Main
                     this.tbCameraPwd.Text = "";
                     this.tbPlayPort.Text = "";
                 }
-            }
+            //}
         }
 
         private void tb_GotFocus(object sender, RoutedEventArgs e)

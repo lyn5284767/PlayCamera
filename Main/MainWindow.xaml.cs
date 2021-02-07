@@ -335,7 +335,6 @@ namespace PlayCamera
         /// </summary>
         private void InitPlayPanel()
         {
-            
             this.MainPanel.Children.Clear();
             this.MainPanel.Children.Add(FourPanel.Instance);
             FourPanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
@@ -379,6 +378,17 @@ namespace PlayCamera
             GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera4);
             GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera5);
             GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera6);
+
+            //GlobalInfo.Instance.sixWithOneBigGdList.Clear();
+            //GlobalInfo.Instance.sixWithOneBigGdList.Add(SixWithOneBig.Instance.sixgridCamera1);
+            //GlobalInfo.Instance.sixWithOneBigGdList.Add(SixWithOneBig.Instance.sixgridCamera2);
+            //GlobalInfo.Instance.sixWithOneBigGdList.Add(SixWithOneBig.Instance.sixgridCamera3);
+            //GlobalInfo.Instance.sixWithOneBigGdList.Add(SixWithOneBig.Instance.sixgridCamera4);
+            //GlobalInfo.Instance.sixWithOneBigGdList.Add(SixWithOneBig.Instance.sixgridCamera5);
+            //GlobalInfo.Instance.sixWithOneBigGdList.Add(SixWithOneBig.Instance.sixgridCamera6);
+            //firstCol.Width = new System.Windows.GridLength(0);
+            //this.MainPanel.Children.Clear();
+            //this.MainPanel.Children.Add(SixWithOneBig.Instance);
         }
 
         /// <summary>

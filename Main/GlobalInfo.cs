@@ -36,8 +36,9 @@ namespace PlayCamera
         public List<ChannelInfo> ChList = new List<ChannelInfo>();//摄像头信息列表
         public List<ICameraFactory> CameraList = new List<ICameraFactory>(); //摄像头
         public List<Grid> fourGdList = new List<Grid>(); //4画面
-        public List<Grid> sixGdList = new List<Grid>(); //4画面
+        public List<Grid> sixGdList = new List<Grid>(); //6画面
         public List<Grid> nineGdList = new List<Grid>(); // 9画面
+        public List<Grid> sixWithOneBigGdList = new List<Grid>(); //6画面
         public NowPanel nowPanel { get; set; }
         public List<CameraWithPlayPanel> cameraWithPlayPanelList = new List<CameraWithPlayPanel>();
         public List<CameraGroup> GroupList = new List<CameraGroup>();

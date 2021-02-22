@@ -40,11 +40,46 @@ namespace PlayCamera
             if (GlobalInfo.Instance.GloConfig.Open == 1)
             {
                 IConnect con = new UDPConnect(GlobalInfo.Instance.GloConfig.LocalIP, GlobalInfo.Instance.GloConfig.LocalPort, GlobalInfo.Instance.GloConfig.RemoteIP, GlobalInfo.Instance.GloConfig.RemotePort);
-                con.GetPlayCameraEvent += Con_GetPlayCameraEvent;
+                //con.GetPlayCameraEvent += Con_GetPlayCameraEvent;
+                con.StartLinkEvent += Con_StartLinkEvent;
+                con.GetCameraEvent += Con_GetCameraEvent;
                 con.OpenConnect();
             }
             this.Loaded += MainWindow_Loaded;
         }
+        /// <summary>
+        /// 开启联动播放
+        /// </summary>
+        private void Con_StartLinkEvent()
+        {
+            Image_MouseLeftButtonDown(null, null);
+            SixImage_MouseLeftButtonDown(null, null);
+        }
+
+        private void Con_GetCameraEvent(string camIP)
+        {
+            Action<string> playFullScreenAct = new Action<string>(PlayCamera);
+            this.Dispatcher.BeginInvoke(playFullScreenAct, camIP);
+        }
+
+        /// <summary>
+        /// 全屏播放
+        /// </summary>
+        /// <param name="camIP">摄像头IP</param>
+        private void PlayCamera(string camIP)
+        {
+
+            //ICameraFactory cam = GlobalInfo.Instance.CameraList.Where(w => w.Info.RemoteIP == camIP).FirstOrDefault();
+            //if (camList.Count > 0)
+            //{
+            //    FullPlayCamera.Instance.PlayCameraFromUdp(camList);
+            //}
+            //else
+            //{
+            //    System.Windows.MessageBox.Show("未配置摄像头");
+            //}
+        }
+
         /// <summary>
         /// 根据UDP传输数据得播放摄像头回调
         /// </summary>

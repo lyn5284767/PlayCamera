@@ -18,18 +18,18 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Border Grid.Row="0" Name="bdOne" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown" Grid.RowSpan="2" Grid.ColumnSpan="2">
-            <!--<Viewbox x:Name="viewboxCameral1" Stretch="Uniform">-->
+            <Viewbox x:Name="viewboxCameral1" Stretch="Uniform">
                 <Grid x:Name="sixgridCamera1">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
-            <!--</Viewbox>-->
+            </Viewbox>
         </Border>
         <Border Name="bdTwo" Grid.Row="0" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
-            <!--<Viewbox x:Name="viewboxCameral2" Stretch="Uniform">-->
+            <Viewbox x:Name="viewboxCameral2" Stretch="Uniform">
                 <Grid x:Name="sixgridCamera2">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
-            <!--</Viewbox>-->
+            </Viewbox>
         </Border>
         <Border Grid.Row="1" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral3" Stretch="Uniform">

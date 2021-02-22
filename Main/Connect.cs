@@ -13,7 +13,22 @@ using System.Windows.Forms;
 namespace PlayCamera
 {
     public delegate void  GetRcvBuffer(DataForm dt);
-    public delegate void GetPlayCamera(List<string> camIP);
+    /// <summary>
+    /// UDP传输-播放的摄像头列表
+    /// </summary>
+    /// <param name="camIP"></param>
+    public delegate void GetPlayCameraList(List<string> camIP);
+    /// <summary>
+    /// UDP传输-播放的单个摄像头
+    /// </summary>
+    /// <param name="camIP"></param>
+    public delegate void GetPlayCamera(string camIP);
+
+    /// <summary>
+    /// UDP传输-播放的单个摄像头
+    /// </summary>
+    /// <param name="camIP"></param>
+    public delegate void StartLink();
 
     public interface IConnect
     {
@@ -35,10 +50,22 @@ namespace PlayCamera
         int Readbytes(int index,int len, byte[] retBuffer);
         int Readbits(int index, int bitOrder, out bool bRet);
         void ClearStatistics();
-
+        /// <summary>
+        /// 获取接受缓存
+        /// </summary>
         event GetRcvBuffer GetRcvBufferEvent;
-
-        event GetPlayCamera GetPlayCameraEvent;
+        /// <summary>
+        /// 播放摄像头列表
+        /// </summary>
+        event GetPlayCameraList GetPlayCameraEvent;
+        /// <summary>
+        /// 播放单个摄像头
+        /// </summary>
+        event GetPlayCamera GetCameraEvent;
+        /// <summary>
+        /// 联动播放开启
+        /// </summary>
+        event StartLink StartLinkEvent;
     }
 
     public class UDPConnect : IConnect
@@ -280,7 +307,10 @@ namespace PlayCamera
 
         }
 
-        public event GetPlayCamera GetPlayCameraEvent;
+        public event GetPlayCameraList GetPlayCameraEvent;
+        public event GetPlayCamera GetCameraEvent;
+        public event StartLink StartLinkEvent;
+
         /// <summary>
         /// 主通信流程：Step 5：从UDP远端读取数据存入rcvBuffer中
         /// </summary>
@@ -304,10 +334,25 @@ namespace PlayCamera
                         UdpModel model = recStr.ToModel<UdpModel>();
                         if (model != null && model.UdpType == UdpType.PlayCamera) // 播放摄像头 
                         {
-                            if (GetPlayCameraEvent != null)
+                            //if (GetPlayCameraEvent != null)
+                            //{
+                            //    string[] camList = model.Content.Split(';');
+                            //    if (camList.ToList().Count > 1)
+                            //    {
+                            //        GetPlayCameraEvent(camList.ToList());
+                            //    }
+                            //}
+                            if (GetCameraEvent != null)
                             {
-                                string[] camList = model.Content.Split(';');
-                                GetPlayCameraEvent(camList.ToList());
+                                string camIP = model.Content;
+                                GetCameraEvent(camIP);
+                            }
+                        }
+                        else if (model != null && model.UdpType == UdpType.StartLink)
+                        {
+                            if (StartLinkEvent != null)
+                            {
+                                StartLinkEvent();
                             }
                         }
                         else
@@ -465,9 +510,12 @@ namespace PlayCamera
         public UdpType UdpType { get; set; }
         public string Content { get; set; }
     }
-
+    /// <summary>
+    /// 协议类型
+    /// </summary>
     public enum UdpType
     {
-        PlayCamera = 0
+        StartLink = 0,
+        PlayCamera = 1
     }
 }

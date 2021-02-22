@@ -7,51 +7,52 @@
              mc:Ignorable="d" 
             d:DesignHeight="450" d:DesignWidth="800" SizeChanged="UserControl_SizeChanged">
     <Grid Name="gdMain">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Border Name="bdOne" Grid.Row="0" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border Name="bdOne" Grid.Row="0" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown" Grid.RowSpan="2" Grid.ColumnSpan="2">
             <Viewbox x:Name="viewboxCameral1" Stretch="Uniform">
                 <Grid x:Name="sixgridCamera1">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="0" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="0" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral2" Stretch="Uniform">
                 <Grid x:Name="sixgridCamera2">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="0" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="1" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral3" Stretch="Uniform">
                 <Grid x:Name="sixgridCamera3">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="1" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="2" Grid.Column="0" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral4" Stretch="Uniform">
                 <Grid x:Name="sixgridCamera4">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="1" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="2" Grid.Column="1" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral5" Stretch="Uniform">
                 <Grid x:Name="sixgridCamera5">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>
                 </Grid>
             </Viewbox>
         </Border>
-        <Border  Grid.Row="1" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
+        <Border  Grid.Row="2" Grid.Column="2" BorderBrush="#686868" BorderThickness="1" MouseLeftButtonDown="bd_MouseLeftButtonDown">
             <Viewbox x:Name="viewboxCameral6" Stretch="Uniform">
                 <Grid x:Name="sixgridCamera6">
                     <Image Source="/Images/camera.jpg" Width="50" Height="50"/>

@@ -91,7 +91,8 @@ namespace Main
                     //{
                     //    this.vlcControl.SourceProvider.MediaPlayer.Stop();
                     //}
-                    this.vlcControl.SourceProvider.MediaPlayer.ResetMedia();
+                    this.vlcControl.SourceProvider.Dispose();
+                    //this.vlcControl.SourceProvider.MediaPlayer.ResetMedia();
                     //this.vlcControl.SourceProvider.MediaPlayer.Dispose();
                 }
             }));

@@ -470,7 +470,7 @@ namespace PlayCamera
         /// </summary>
         private void CameraSaveThreadTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (cameraSaveThreadTimer.Interval == 1) cameraSaveThreadTimer.Interval = 1 * 60 * 1000;
+            if (cameraSaveThreadTimer.Interval == 1) cameraSaveThreadTimer.Interval = 5 * 60 * 1000;
             try
             {
                 foreach (ICameraFactory camera in GlobalInfo.Instance.CameraList)

@@ -143,6 +143,9 @@
       <DependentUpon>FullPlayCamera.xaml</DependentUpon>
     </Compile>
     <Compile Include="JsonHelper.cs" />
+    <Compile Include="NewPlayPanel.xaml.cs">
+      <DependentUpon>NewPlayPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NinePanel.xaml.cs">
       <DependentUpon>NinePanel.xaml</DependentUpon>
     </Compile>
@@ -197,6 +200,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NewPlayPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NinePanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -40,6 +40,7 @@ namespace PlayCamera
         public List<Grid> nineGdList = new List<Grid>(); // 9画面
         public List<Grid> sixWithOneBigGdList = new List<Grid>(); //6画面
         public NowPanel nowPanel { get; set; }
+        public bool FullScreen { get; set; }
         public List<CameraWithPlayPanel> cameraWithPlayPanelList = new List<CameraWithPlayPanel>();
         public List<CameraGroup> GroupList = new List<CameraGroup>();
         //public List<Expander> expanderList = new List<Expander>(); // 保存所有分组
@@ -87,9 +88,10 @@ namespace PlayCamera
     /// 摄像头分屏枚举
     /// </summary>
     public enum NowPanel
-    { 
+    {
+        One = 0,
         Four =1,
         Nine =2,
-        Six = 3
+        Six = 3,
     }
 }

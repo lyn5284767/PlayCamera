@@ -52,11 +52,18 @@ namespace PlayCamera
         /// </summary>
         private void Con_StartLinkEvent()
         {
+            Action StartLink = new Action(StartLinkMethod);
+            this.Dispatcher.BeginInvoke(StartLink);
+           
+        }
+
+        private void StartLinkMethod()
+        {
             Image_MouseLeftButtonDown(null, null);
             SixImage_MouseLeftButtonDown(null, null);
         }
 
-        private void Con_GetCameraEvent(string camIP)
+            private void Con_GetCameraEvent(string camIP)
         {
             Action<string> playFullScreenAct = new Action<string>(PlayCamera);
             this.Dispatcher.BeginInvoke(playFullScreenAct, camIP);

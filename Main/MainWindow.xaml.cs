@@ -378,48 +378,62 @@ namespace PlayCamera
         private void InitPlayPanel()
         {
             this.MainPanel.Children.Clear();
-            this.MainPanel.Children.Add(FourPanel.Instance);
-            FourPanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
-            FourPanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
-            FourPanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
-            FourPanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
-            FourPanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
-            FourPanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
-            //this.lbCamera.Focus();
-            GlobalInfo.Instance.fourGdList.Clear();
-            GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera1);
-            GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera2);
-            GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera3);
-            GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera4);
-            NinePanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
-            NinePanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
-            NinePanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
-            NinePanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
-            NinePanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
-            NinePanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
+            this.MainPanel.Children.Add(NewPlayPanel.Instance);
             GlobalInfo.Instance.nineGdList.Clear();
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera1);
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera2);
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera3);
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera4);
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera5);
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera6);
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera7);
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera8);
-            GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera9);
-            SixPanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
-            SixPanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
-            SixPanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
-            SixPanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
-            SixPanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
-            SixPanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
-            GlobalInfo.Instance.sixGdList.Clear();
-            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera1);
-            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera2);
-            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera3);
-            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera4);
-            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera5);
-            GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera6);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera1);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera2);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera3);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera4);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera5);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera6);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera7);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera8);
+            GlobalInfo.Instance.nineGdList.Add(NewPlayPanel.Instance.ninegridCamera9);
+            NewPlayPanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
+
+            //this.MainPanel.Children.Clear();
+            //this.MainPanel.Children.Add(FourPanel.Instance);
+            //FourPanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
+            //FourPanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
+            //FourPanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
+            //FourPanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
+            //FourPanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
+            //FourPanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
+            ////this.lbCamera.Focus();
+            //GlobalInfo.Instance.fourGdList.Clear();
+            //GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera1);
+            //GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera2);
+            //GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera3);
+            //GlobalInfo.Instance.fourGdList.Add(FourPanel.Instance.gridCamera4);
+            //NinePanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
+            //NinePanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
+            //NinePanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
+            //NinePanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
+            //NinePanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
+            //NinePanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
+            //GlobalInfo.Instance.nineGdList.Clear();
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera1);
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera2);
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera3);
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera4);
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera5);
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera6);
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera7);
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera8);
+            //GlobalInfo.Instance.nineGdList.Add(NinePanel.Instance.ninegridCamera9);
+            //SixPanel.Instance.FullScreenEvent -= Instance_FullScreenEvent;
+            //SixPanel.Instance.SelectCameraEvent -= Instance_SelectCameraEvent;
+            //SixPanel.Instance.IsCameraPlayEvent -= Instance_IsCameraPlayEvent;
+            //SixPanel.Instance.FullScreenEvent += Instance_FullScreenEvent;
+            //SixPanel.Instance.SelectCameraEvent += Instance_SelectCameraEvent;
+            //SixPanel.Instance.IsCameraPlayEvent += Instance_IsCameraPlayEvent;
+            //GlobalInfo.Instance.sixGdList.Clear();
+            //GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera1);
+            //GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera2);
+            //GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera3);
+            //GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera4);
+            //GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera5);
+            //GlobalInfo.Instance.sixGdList.Add(SixPanel.Instance.sixgridCamera6);
 
             //GlobalInfo.Instance.sixWithOneBigGdList.Clear();
             //GlobalInfo.Instance.sixWithOneBigGdList.Add(SixWithOneBig.Instance.sixgridCamera1);
@@ -661,15 +675,14 @@ namespace PlayCamera
         /// </summary>
         private void FourImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.MainPanel.Children.Clear();
-            this.MainPanel.Children.Add(FourPanel.Instance);
+            //this.MainPanel.Children.Clear();
+            //this.MainPanel.Children.Add(FourPanel.Instance);
             imgFour.Source = new BitmapImage(new Uri("/Images/FourSelect.png", UriKind.Relative));
             imgNine.Source = new BitmapImage(new Uri("/Images/Nine.png", UriKind.Relative));
             imgSix.Source = new BitmapImage(new Uri("/Images/Six.png", UriKind.Relative));
-            //this.gdFour.Background = (Brush)bc.ConvertFrom("#A6CFDC");
-            //this.gdNine.Background = (Brush)bc.ConvertFrom("#FFFFFF");
             GlobalInfo.Instance.nowPanel = NowPanel.Four;
-            //CameraBindGrid();
+
+            NewPlayPanel.Instance.SetPlayPanelSize(NowPanel.Four);
         }
         /// <summary>
         /// 双击全屏
@@ -698,8 +711,8 @@ namespace PlayCamera
         /// </summary>
         private void NineImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.MainPanel.Children.Clear();
-            this.MainPanel.Children.Add(NinePanel.Instance);
+            //this.MainPanel.Children.Clear();
+            //this.MainPanel.Children.Add(NinePanel.Instance);
             //this.gdFour.Background = (Brush)bc.ConvertFrom("#FFFFFF");
             //this.gdNine.Background = (Brush)bc.ConvertFrom("#A6CFDC");
             imgFour.Source = new BitmapImage(new Uri("/Images/Four.png", UriKind.Relative));
@@ -707,6 +720,8 @@ namespace PlayCamera
             imgSix.Source = new BitmapImage(new Uri("/Images/Six.png", UriKind.Relative));
             GlobalInfo.Instance.nowPanel = NowPanel.Nine;
             //CameraBindGrid();
+
+            NewPlayPanel.Instance.SetPlayPanelSize(NowPanel.Nine);
         }
         /// <summary>
         /// 退出
@@ -733,22 +748,40 @@ namespace PlayCamera
         /// </summary>
         private void FullImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
-            FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
-            this.gdMain.Visibility = Visibility.Collapsed;
-            if (!this.gdAll.Children.Contains(FullPlayCamera.Instance))
+            //FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
+            //FullPlayCamera.Instance.CanelFullScreenEvent += Instance_CanelFullScreenEvent;
+            //this.gdMain.Visibility = Visibility.Collapsed;
+            //if (!this.gdAll.Children.Contains(FullPlayCamera.Instance))
+            //{
+            //    this.gdAll.Children.Add(FullPlayCamera.Instance);
+            //}
+            //else
+            //{
+            //    this.gdAll.Children.Remove(FullPlayCamera.Instance);
+            //    this.gdAll.Children.Add(FullPlayCamera.Instance);
+            //}
+            //Grid dg = GlobalInfo.Instance.SelectGrid;
+            //if (dg != null && dg.Tag is ICameraFactory)
+            //{
+            //    FullPlayCamera.Instance.PlayCamera((dg.Tag as ICameraFactory).Info.ID);
+            //}
+            if (!GlobalInfo.Instance.FullScreen)
             {
-                this.gdAll.Children.Add(FullPlayCamera.Instance);
+                Grid dg = GlobalInfo.Instance.SelectGrid;
+                if (dg != null && dg.Tag is ICameraFactory)
+                {
+                    NewPlayPanel.Instance.Camera_FullScreenEvent((dg.Tag as ICameraFactory).Info.ID);
+                    GlobalInfo.Instance.FullScreen = true;
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("未检测到播放摄像头");
+                }
             }
             else
             {
-                this.gdAll.Children.Remove(FullPlayCamera.Instance);
-                this.gdAll.Children.Add(FullPlayCamera.Instance);
-            }
-            Grid dg = GlobalInfo.Instance.SelectGrid;
-            if (dg != null && dg.Tag is ICameraFactory)
-            {
-                FullPlayCamera.Instance.PlayCamera((dg.Tag as ICameraFactory).Info.ID);
+                GlobalInfo.Instance.FullScreen = false;
+                NewPlayPanel.Instance.SetPlayPanelSize(GlobalInfo.Instance.nowPanel);
             }
         }
         /// <summary>
@@ -756,21 +789,22 @@ namespace PlayCamera
         /// </summary>
         private void Instance_CanelFullScreenEvent()
         {
-            FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
-            this.gdMain.Visibility = Visibility.Visible;
-            if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
-            {
-                FourPanel.Instance.PlayCamera();
-            }
-            else if(GlobalInfo.Instance.nowPanel == NowPanel.Nine)
-            {
-                NinePanel.Instance.PlayCamera();
-            }
-            else if (GlobalInfo.Instance.nowPanel == NowPanel.Six)
-            {
-                SixPanel.Instance.PlayCamera();
-            }
-            this.gdAll.Children.Remove(FullPlayCamera.Instance);
+            //FullPlayCamera.Instance.CanelFullScreenEvent -= Instance_CanelFullScreenEvent;
+            //this.gdMain.Visibility = Visibility.Visible;
+            //if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
+            //{
+            //    FourPanel.Instance.PlayCamera();
+            //}
+            //else if(GlobalInfo.Instance.nowPanel == NowPanel.Nine)
+            //{
+            //    NinePanel.Instance.PlayCamera();
+            //}
+            //else if (GlobalInfo.Instance.nowPanel == NowPanel.Six)
+            //{
+            //    SixPanel.Instance.PlayCamera();
+            //}
+            //this.gdAll.Children.Remove(FullPlayCamera.Instance);
+            NewPlayPanel.Instance.SetPlayPanelSize(GlobalInfo.Instance.nowPanel);
         }
         /// <summary>
         /// 播放摄像头更改图标
@@ -1536,12 +1570,13 @@ namespace PlayCamera
         /// </summary>
         private void SixImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.MainPanel.Children.Clear();
-            this.MainPanel.Children.Add(SixPanel.Instance);
+            //this.MainPanel.Children.Clear();
+            //this.MainPanel.Children.Add(SixPanel.Instance);
             imgFour.Source = new BitmapImage(new Uri("/Images/Four.png", UriKind.Relative));
             imgNine.Source = new BitmapImage(new Uri("/Images/Nine.png", UriKind.Relative));
             imgSix.Source = new BitmapImage(new Uri("/Images/SixSelect.png", UriKind.Relative));
             GlobalInfo.Instance.nowPanel = NowPanel.Six;
+            NewPlayPanel.Instance.SetPlayPanelSize(NowPanel.Six);
         }
     }
 

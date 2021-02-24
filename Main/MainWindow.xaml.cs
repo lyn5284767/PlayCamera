@@ -76,15 +76,7 @@ namespace PlayCamera
         private void PlayCamera(string camIP)
         {
 
-            //ICameraFactory cam = GlobalInfo.Instance.CameraList.Where(w => w.Info.RemoteIP == camIP).FirstOrDefault();
-            //if (camList.Count > 0)
-            //{
-            //    FullPlayCamera.Instance.PlayCameraFromUdp(camList);
-            //}
-            //else
-            //{
-            //    System.Windows.MessageBox.Show("未配置摄像头");
-            //}
+            NewPlayPanel.Instance.SetPlayPanelSizeByUDP(camIP);
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,7 +22,7 @@ namespace Main
     /// <summary>
     /// NewPlayPanel.xaml 的交互逻辑
     /// </summary>
-    public partial class NewPlayPanel : UserControl
+    public partial class NewPlayPanel : System.Windows.Controls.UserControl
     {
         private static NewPlayPanel _instance = null;
         private static readonly object syncRoot = new object();
@@ -167,6 +168,31 @@ namespace Main
         }
 
         /// <summary>
+        /// 设置播放画面大小
+        /// </summary>
+        public void SetPlayPanelSizeByUDP(string camIP)
+        {
+            foreach (Border bd in FindVisualChildren<Border>(this.gdMain))
+            {
+                // 找到需要切换的摄像头
+                if (bd.Tag != null && (bd.Tag as ICameraFactory).Info.RemoteIP == camIP)
+                {
+                    if (bd.Child is Viewbox && this.bdOne.Child is Viewbox)
+                    {
+                        Viewbox viewboxMain = bd.Child as Viewbox;
+                        Viewbox viewboxBack = this.bdOne.Child as Viewbox;
+                        bd.Child = null;
+                        this.bdOne.Child = null;
+                        bd.Child = viewboxBack;
+                        this.bdOne.Child = viewboxMain;
+                    }
+                    break;
+                }
+            }
+            PlayCameraInThread();
+        }
+
+        /// <summary>
         /// 尺寸改变事件
         /// </summary>
         /// <param name="sender"></param>
@@ -204,7 +230,7 @@ namespace Main
                 }
                 else
                 {
-                    SetPlayPanelSize(NowPanel.One);
+                    //SetPlayPanelSize(NowPanel.One);
                 }
             }
         }
@@ -282,15 +308,27 @@ namespace Main
             //        GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], null });
             //    }
             //}
+            int playNum = 0;
             if (GlobalInfo.Instance.nowPanel == NowPanel.One)
-            { }
+            {
+                playNum = 1;
+            }
             else if (GlobalInfo.Instance.nowPanel == NowPanel.Four)
-            { }
+            {
+                playNum = camList.Count < 4 ? camList.Count : 4;
+            }
             else if (GlobalInfo.Instance.nowPanel == NowPanel.Six)
-            { }
+            {
+                 playNum = camList.Count < 6 ? camList.Count : 6;
+            }
             else if (GlobalInfo.Instance.nowPanel == NowPanel.Nine)
-            { }
-            GlobalInfo.Instance.nineGdList[1].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[1], camList[0] });
+            {
+                playNum = camList.Count < 9 ? camList.Count : 9;
+            }
+            for (int i = 0; i < playNum; i++)
+            {
+                GlobalInfo.Instance.nineGdList[i].Dispatcher.Invoke(new PlayDelegate(PlayAction), new object[] { GlobalInfo.Instance.nineGdList[i], camList[i] });
+            }
         }
 
         /// <summary>
@@ -325,23 +363,19 @@ namespace Main
                             {
                                 gridCamera.Children.Add(camera as RTSPControl);
                             }
-                            camera.SetSize(this.bdOne.ActualHeight, this.bdOne.ActualWidth);
                             camera.FullScreenEvent += Camera_FullScreenEvent;
                             camera.SelectCameraEvent += Camera_SelectCameraEvent;
                             gridCamera.Tag = camera;
-                            if (gridCamera.Parent != null && gridCamera.Parent is Viewbox)
-                            {
-                                Viewbox vb = gridCamera.Parent as Viewbox;
-                                if (vb.Parent != null && vb.Parent is Border)
-                                {
-                                    (vb.Parent as Border).Tag = camera;
-                                }
-                            }
+                            SetCameraSize(gridCamera, camera);
+                        }
+                        else
+                        {
+                            SetCameraSize(gridCamera, camera);
                         }
                     }
                     else
                     {
-                        //cameraInitImage.Source = new BitmapImage(new Uri("../Images/camera.jpg", UriKind.Relative));
+                        cameraInitImage.Source = new BitmapImage(new Uri("../Images/camera.jpg", UriKind.Relative));
                         camera.Info.IsPlay = false;
                         gridCamera.Children.Clear();
                         gridCamera.Children.Add(cameraInitImage);
@@ -362,6 +396,23 @@ namespace Main
                 System.Windows.MessageBox.Show("摄像头已经在其他窗口播放");
                 gridCamera.Children.Clear();
                 gridCamera.Children.Add(cameraInitImage);
+            }
+        }
+        /// <summary>
+        /// 设置摄像头播放尺寸
+        /// </summary>
+        /// <param name="gridCamera"></param>
+        /// <param name="camera"></param>
+        private void SetCameraSize(Grid gridCamera, ICameraFactory camera)
+        {
+            if (gridCamera.Parent != null && gridCamera.Parent is Viewbox)
+            {
+                Viewbox vb = gridCamera.Parent as Viewbox;
+                if (vb.Parent != null && vb.Parent is Border)
+                {
+                    (vb.Parent as Border).Tag = camera;
+                    camera.SetSize((vb.Parent as Border).ActualHeight, (vb.Parent as Border).ActualWidth);
+                }
             }
         }
 
